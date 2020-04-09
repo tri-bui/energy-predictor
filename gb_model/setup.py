@@ -18,8 +18,8 @@ REQUIRES_PYTHON = '>=3.7.0'
 # Version
 CURRENT_PATH = Path(__file__).resolve().parent
 PACKAGE_PATH = CURRENT_PATH / NAME
-with open(PACKAGE_PATH / 'VERSION') as f:
-    VERSION = f.read().strip()
+with open(PACKAGE_PATH / 'VERSION') as v:
+    VERSION = v.read().strip()
 
 
 # Long description
@@ -32,8 +32,8 @@ except FileNotFoundError:
 
 # Requirements
 def list_reqs(filename='requirements.txt'):
-    with open(filename) as f:
-        return f.read().splitlines()
+    with open(filename) as req:
+        return req.read().splitlines()
 
 
 # Setup

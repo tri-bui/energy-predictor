@@ -1,13 +1,16 @@
 import sys
 import logging
+from logging.handlers import TimedRotatingFileHandler
 
 from gb_model.config import config
 
 
-FORMATTER = logging.Formatter(
-	'%(asctime)s - %(name)s - %(levelname)s -'
-	'%(funcName)s:%(lineno)d - %(message)s')
 LOG_FILE = config.LOG_PATH / 'model.log'
+
+FORMATTER = logging.Formatter(
+	'%(levelname)s - %(asctime)s - %(name)s - '
+	'%(funcName)s:%(lineno)d - %(message)s'
+)
 
 
 def get_console_handler():
@@ -17,7 +20,7 @@ def get_console_handler():
 
 
 def get_file_handler():
-	file_handler = logging.handlers.TimedRotatingFileHandler(LOG_FILE, when='midnight')
+	file_handler = TimedRotatingFileHandler(LOG_FILE, when='midnight')
 	file_handler.setFormatter(FORMATTER)
 	file_handler.setLevel(logging.INFO)
 	return file_handler

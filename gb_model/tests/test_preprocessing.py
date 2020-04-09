@@ -34,6 +34,28 @@ def time_converter():
     tc.fit(weather)
     return tc
 
+
+@pytest.fixture
+def time_reindexer():
+    tr = preprocessing.TimeReindexer()
+    tr.fit(weather, t_start='2017-01-01 00:00:00', t_end='2017-01-02 23:00:00')
+    return tr
+
+
+@pytest.fixture
+def missing_imputer():
+    return preprocessing.MissingImputer(config.CUB_VARS, config.LIN_VARS)
+
+
+@pytest.fixture
+def data_copier(time_reindexer):
+    X = time_reindexer.transform(weather)
+    dc = preprocessing.DataCopier()
+    dc.fit(X, copy_from_site=0, copy_to_site=15)
+    X = dc.transform(X)
+    return dc, X
+
+
 def test_TimeConverter(time_converter):
 
     """
@@ -46,12 +68,6 @@ def test_TimeConverter(time_converter):
     assert X.loc[0, 'timestamp'] == datetime.datetime(2016, 12, 31, 19)
     assert X.loc[93, 'timestamp'] == datetime.datetime(2017, 1, 2, 18)
 
-
-@pytest.fixture
-def time_reindexer():
-    tr = preprocessing.TimeReindexer()
-    tr.fit(weather, t_start='2017-01-01 00:00:00', t_end='2017-01-02 23:00:00')
-    return tr
 
 def test_TimeReindexer(time_reindexer):
 
@@ -66,10 +82,6 @@ def test_TimeReindexer(time_reindexer):
     assert X.loc[0, 'timestamp'] == datetime.datetime(2017, 1, 1, 0)
     assert X.loc[95, 'timestamp'] == datetime.datetime(2017, 1, 2, 23)
 
-
-@pytest.fixture
-def missing_imputer():
-    return preprocessing.MissingImputer(config.CUB_VARS, config.LIN_VARS)
 
 def test_MissingImputer(missing_imputer):
 
@@ -86,11 +98,7 @@ def test_MissingImputer(missing_imputer):
     assert X.isnull().sum().sum() == 48
 
 
-@pytest.fixture
-def data_copier():
-    return preprocessing.DataCopier()
-
-def test_DataCopier(data_copier, time_reindexer):
+def test_DataCopier(data_copier):
 
     """
     Site 0 has 48 rows and site 15 only has 46 so the data has to be
@@ -99,13 +107,9 @@ def test_DataCopier(data_copier, time_reindexer):
     'sea_level_pressure' data should be the same for sites 0 and 15.
     """
 
-    X = time_reindexer.transform(weather)
-    data_copier.fit(X, copy_from_site=0, copy_to_site=15)
-    X = data_copier.transform(X)
-
-    s0_slp = weather.loc[weather[data_copier.site_var] == 0, data_copier.var_to_copy]
-    s15_slp = X.loc[X[data_copier.site_var] == 15, data_copier.var_to_copy]
-
+    dc, X = data_copier
+    s0_slp = weather.loc[weather[dc.site_var] == dc.copy_from_site, dc.var_to_copy]
+    s15_slp = X.loc[X[dc.site_var] == dc.copy_to_site, dc.var_to_copy]
     assert X.shape[0] == 96
     assert (s0_slp - s15_slp).sum() == 0
 

@@ -27,6 +27,22 @@ def weather_extractor():
     we.fit(df)
     return we
 
+
+@pytest.fixture
+def time_extractor():
+    return features.TimeExtractor()
+
+
+@pytest.fixture
+def holiday_extractor():
+    return features.HolidayExtractor(config.COUNTRIES)
+
+
+@pytest.fixture
+def feat_selector():
+    return features.FeatSelector(config.FEATS[:4] + config.FEATS[-2:])
+
+
 def test_WeatherExtractor(weather_extractor):
 
     """
@@ -44,10 +60,6 @@ def test_WeatherExtractor(weather_extractor):
     assert np.round(X.loc[1, 'wind_direction_y'], 2) == 0.50
     assert np.round(X.loc[49, 'wind_direction_y'], 2) == -0.87
 
-
-@pytest.fixture
-def time_extractor():
-    return features.TimeExtractor()
 
 def test_TimeExtractor(time_extractor):
 
@@ -68,10 +80,6 @@ def test_TimeExtractor(time_extractor):
     assert X.loc[90, 'is_weekend'] == 0
 
 
-@pytest.fixture
-def holiday_extractor():
-    return features.HolidayExtractor(config.COUNTRIES)
-
 def test_HolidayExtractor(holiday_extractor):
 
     """
@@ -84,10 +92,6 @@ def test_HolidayExtractor(holiday_extractor):
     assert X.loc[0, 'country'] == X.loc[93, 'country'] == 'US'
     assert X.loc[1, 'is_holiday'] == X.loc[92, 'is_holiday'] == 1
 
-
-@pytest.fixture
-def feat_selector():
-    return features.FeatSelector(config.FEATS[:4] + config.FEATS[-2:])
 
 def test_FeatSelector(feat_selector):
     X = feat_selector.transform(df)

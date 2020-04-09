@@ -7,10 +7,9 @@ ROOT_PATH = Path(gb_model.__file__).resolve().parent
 DATA_PATH = ROOT_PATH / 'datasets'
 MODEL_PATH = ROOT_PATH / 'models'
 LOG_PATH = ROOT_PATH / 'logs'
+LOG_PATH.mkdir(exist_ok=True)
 
-print(Path(__file__).resolve().parent)
-
-# Column list
+# Data columns
 METER_COLS = ['building_id', 'meter', 'timestamp']
 WEATHER_COLS = ['site_id', 'timestamp', 'air_temperature', 'dew_temperature',
                 'sea_level_pressure', 'wind_speed', 'wind_direction']
