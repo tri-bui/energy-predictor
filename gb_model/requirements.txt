@@ -3,7 +3,7 @@ joblib==0.14.1
 holidays==0.10.1
 numpy==1.18.1
 pandas==1.0.3
-scikit-learn==0.22.2
+scikit-learn==0.22.0
 lightgbm==2.3.1
 
 # Testing

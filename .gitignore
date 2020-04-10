@@ -1,2 +1,5 @@
+*cache*
 *.log
 lgb*
+*.csv
+*_test.json

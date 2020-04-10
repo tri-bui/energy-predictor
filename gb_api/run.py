@@ -1,7 +1,7 @@
 from api import application, config
 
 
-app = application.create_app(config.DevelopmentConfig)
+app = application.create_app(config.TestingConfig)
 
 
 if __name__ == '__main__':

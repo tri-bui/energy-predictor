@@ -1,7 +1,7 @@
 import joblib
 import numpy as np
 import pandas as pd
-import xgboost as xgb
+# import xgboost as xgb
 
 
 def split(df,
@@ -50,7 +50,7 @@ def transform(df, rare_enc, mean_enc, scaler):
 	return transformed
 
 
-def predict(df, model_path, use_xgb=True):
+def predict(df, model_path, use_xgb=False):
 
 	"""
 	Make predictions using a trained model.
@@ -64,8 +64,8 @@ def predict(df, model_path, use_xgb=True):
 	"""
 
 	df = df.copy()
-	if use_xgb:
-		df = xgb.DMatrix(df)
+	# if use_xgb:
+	# 	df = xgb.DMatrix(df)
 
 	model = joblib.load(model_path)
 	pred = model.predict(df)
