@@ -1,5 +1,5 @@
-*cache*
+*.pyc
 *.log
-lgb*
 *.csv
 *_test.json
+lgb*

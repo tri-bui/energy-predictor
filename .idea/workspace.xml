@@ -2,33 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c6dd44a4-289c-4102-bc88-57e09859d4b1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/._.DS_Store" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/._.idea" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/._.pytest_cache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/._gb_model" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_api/VERSION" beforeDir="false" afterPath="$PROJECT_DIR$/gb_api/VERSION" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_api/api/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/gb_api/api/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_api/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/gb_api/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_api/tests/test_application.py" beforeDir="false" afterPath="$PROJECT_DIR$/gb_api/tests/test_application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/._.DS_Store" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/._.idea" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/._build" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/._dist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/._gb_model" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/._setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/._.DS_Store" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/.___pycache__" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/._config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/._processing" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/._tests" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/VERSION" beforeDir="false" afterPath="$PROJECT_DIR$/gb_model/gb_model/VERSION" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/config/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/gb_model/gb_model/config/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/datasets/building.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/gb_model/gb_model/datasets/building.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/gb_model/gb_model/predict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/gb_model/processing/prediction.py" beforeDir="false" afterPath="$PROJECT_DIR$/gb_model/gb_model/processing/prediction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gb_model/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/gb_model/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
