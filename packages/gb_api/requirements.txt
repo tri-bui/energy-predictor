@@ -1,0 +1,8 @@
+# API
+flask==1.1.1
+
+# Testing
+pytest==5.4.1
+
+# Model package
+# -e '/opt/gep_gbm/gb_model'

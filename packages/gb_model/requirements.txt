@@ -1,0 +1,15 @@
+# Pipeline
+joblib==0.14.1
+holidays==0.10.1
+numpy==1.18.1
+pandas==1.0.3
+scikit-learn==0.22.0
+feature-engine==0.3.1
+lightgbm==2.3.1
+
+# Testing
+pytest==5.4.1
+
+# Packaging
+setuptools==46.1.1
+wheel==0.34.2

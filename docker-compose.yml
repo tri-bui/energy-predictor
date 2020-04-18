@@ -1,0 +1,9 @@
+version: "3"
+services:
+  app:
+    image: gbm
+    working_dir: /opt/gep_gbm/gb_api/gb_api
+    ports:
+      - 8000:5000
+    command: python run.py
+

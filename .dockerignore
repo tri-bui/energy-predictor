@@ -3,8 +3,7 @@ dist/
 *.egg-info/
 *.idea/
 *cache*/
-data_test/
-lgb/
 *.pyc*
 *.log*
 *.csv*
+
