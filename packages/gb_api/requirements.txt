@@ -1,5 +1,6 @@
 # API
 flask==1.1.1
+gunicorn==19.6
 
 # Testing
 pytest==5.4.1

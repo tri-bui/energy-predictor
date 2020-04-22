@@ -8,3 +8,5 @@ lgb/
 *.pyc*
 *.log*
 *.csv*
+*aws*.sh
+

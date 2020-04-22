@@ -1,23 +1,20 @@
 # Docker image
 FROM python:3.7
 
-# Working directory in container
-WORKDIR /opt/gep_gbm
+# Package files
+ADD packages /opt/gep_gbm
 
-# API and model packages
-COPY packages .
-
-# Package dependencies
-RUN pip install -e ./gb_api && pip install -e ./gb_model
+# Package install
+RUN pip install -e /opt/gep_gbm/gb_api && pip install -e /opt/gep_gbm/gb_model
 
 # App setup
-ENV FLASK_APP=./gb_api/gb_api/run.py
-RUN chmod +x $FLASK_APP
+WORKDIR /opt/gep_gbm/gb_api/gb_api
+ENV FLASK_APP=run.py
+RUN chmod +x run.sh
 
 # Port
 EXPOSE 5000
 
 # Run
-# ENTRYPOINT bash
-CMD python $FLASK_APP 
+CMD ["bash", "./run.sh"] 
 
