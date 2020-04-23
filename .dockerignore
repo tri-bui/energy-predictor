@@ -5,6 +5,8 @@ dist/
 *.ipynb_checkpoints/
 *cache*/
 data_test/
+*DS_Store*
+*cache*
 *.pyc*
 *.log*
 *.csv*

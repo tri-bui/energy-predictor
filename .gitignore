@@ -6,6 +6,8 @@ dist/
 *cache*/
 data_test/
 lgb/
+*DS_Store*
+*cache*
 *.pyc*
 *.log*
 *.csv*
