@@ -24,7 +24,7 @@ As the study of power consumption in buildings is a very specific problem, this 
 - Returns: Energy consumption predictions in kWh and model version
 - Format: JSON
 
-##### NOTE: Making a POST request to the prediction endpoint requires BOTH the meter and weather data in the body. This can either be sent as raw JSON text or as JSON files labeled with keys:
-- Format: {"meter": {* METER DATA *}, "weather": {* WEATHER DATA *}}
+#### NOTE: Making a POST request to the prediction endpoint requires BOTH the meter and weather data in the body. This can either be sent as raw JSON text or as JSON files labeled with keys:
+- Format: {"meter": {METER DATA}, "weather": {WEATHER DATA}}
 - Meter data must have the following columns: ["timestamp", "building_id", "meter"]
 - Weather data must have the following columns: ["timestamp", "site_id", "air_temperature", "dew_temperature", "sea_level_pressure", "wind_speed", "wind_direction"]

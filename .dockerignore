@@ -2,7 +2,9 @@ build/
 dist/
 *.egg-info/
 *.idea/
+*.ipynb_checkpoints/
 *cache*/
+data_test/
 *.pyc*
 *.log*
 *.csv*
