@@ -53,9 +53,10 @@ def pred_pipe(df, rare_path, mean_path, sclr_path, model_path,
 
 	df = df.copy()
 	df.reset_index(inplace=True)
-	tmp = df[['index', 'site_id', 'meter']].copy()
+	# tmp = df[['index', 'site_id', 'meter']].copy()
 	df.drop(['index', 'site_id'], axis=1, inplace=True)
 
+	# model = joblib.load(model_path / 'lgb0.pkl')
 	df_list = pdn.split(df)
 	preds = []
 
@@ -65,15 +66,16 @@ def pred_pipe(df, rare_path, mean_path, sclr_path, model_path,
 		ss = joblib.load(sclr_path / f'scaler{str(i)}.pkl')
 		X = pdn.transform(df_list[i], re, me, ss)
 
-		y_pred = pdn.predict(X, model_path / f'lgb{str(i)}.pkl', use_xgb=use_xgb)
+		# y_pred = pdn.predict(X, model=model, use_xgb=use_xgb)
+		y_pred = pdn.predict(X, model_path=(model_path / f'lgb{str(i)}.pkl'), use_xgb=use_xgb)
 		y = df_list[i][[sqft_var]].copy()
 		y[target_var] = y_pred
 		y = pdn.inverse_transform(y)
 		preds.append(y)
 
 	pred = pd.concat(preds).sort_index().reset_index()
-	pred = pd.merge(tmp, pred, on='index', how='left')
-	pred = pdn.convert_site0_units(pred)
+	# pred = pd.merge(tmp, pred, on='index', how='left')
+	# pred = pdn.convert_site0_units(pred)
 	
 	pred = pred[target_var].tolist()
 	return pred

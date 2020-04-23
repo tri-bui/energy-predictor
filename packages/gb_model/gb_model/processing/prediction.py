@@ -50,13 +50,14 @@ def transform(df, rare_enc, mean_enc, scaler):
 	return transformed
 
 
-def predict(df, model_path, use_xgb=False):
+def predict(df, model=None, model_path=None, use_xgb=False):
 
 	"""
 	Make predictions using a trained model.
 
 	:param df: (Pandas dataframe) data with features matching
 			   training data
+	:param model_path: (Model object) trained model
 	:param model_path: (string) path to trained model
 	:param use_xgb: (boolean) whether or not to predict using a XGBoost model
 
@@ -67,7 +68,8 @@ def predict(df, model_path, use_xgb=False):
 	# if use_xgb:
 	# 	df = xgb.DMatrix(df)
 
-	model = joblib.load(model_path)
+	if model_path:
+		model = joblib.load(model_path)
 	pred = model.predict(df)
 	pred[pred < 0] = 0
 	return pred
@@ -101,7 +103,8 @@ def convert_site0_units(df,
 	Convert site 0 meter 0 readings from kWh back to kBTU and site 0 meter 1
 	readings from tons back to kBTU. Site 0 meter readings in the training data
 	were recorded in kBTU, but the model was trained on units kWh and tons for
-	meter 0 and meter 1 respectively.
+	meter 0 and meter 1 respectively. This function is only used for the Kaggle
+	submission, as site 0 units were not in kWh.
 
 	:param df: (Pandas dataframe) data with site, meter, and target variables
 	:param site_var: (String) name of site variable
