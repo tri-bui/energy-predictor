@@ -1,30 +1,16 @@
 # Great Energy Predictor
 
-## Web Service documentation
+### Background
+In a broad sense, a lot of buildings today have a problem of unnecessary or inefficient energy usage, which is both wasteful for the owner who has to pay for it and detrimental to the environment because of the carbon emissions. Retrofitting these buildings to make them more energy-efficient requires significant investments, but doing so could be beneficial in the long term for the investors, the building owners, and the environment. This is done through something called pay-for-performance financing, which bases payments on the energy savings made possible by the retrofit. But the problem here is that there is no way of knowing how much energy a building is saving from the retrofit. 
 
-This application predicts the power consumption of 1,449 different buildings based on 4 different meter types: electricity, chilled water, steam, and hot water. Not all buildings have every meter. Predictions are made at hourly points in time (example: Jan 1, 2018 12:00:00) based on the timestamps found in the provided meter data. This also requires that weather data be provided. If the predictions are for a future point in time, the weather forecast data would suffice. Data requirements are described in the NOTE below.
+### Summary
+The solution is to build a scalable model to estimate the energy usage of buildings if the retrofits had not been made. These estimates are used to compare to the actual energy usage after the retrofit has been made to yield the energy savings, which the payments are based on. Accurate estimates could potentially draw more investors and lower the cost of financing for building owners. 
 
-As the study of power consumption in buildings is a very specific problem, this application was designed to make predictions for these 1,449 buildings ONLY. Any new buildings would require additional training data for those buildings and the model would have to be retrained and updated.
+### Specifications
+The final deliverable will be a prediction application deployed as a web service. This project will require a system with 4-core CPU and 16 GB of RAM. No GPU is required.
 
-### Endpoints
+### Data
+The data being used is a collection of 1,449 buildings in 16 sites around the world. It contains measurements from 4 types of energy meters (electricity, chilled water, steam, and hot water) over a period of an entire year (2016). Each observation is a meter reading from a certain meter in a certain building at a certain point in time. This means that at any point in time, there could be up to 4 observations pertaining to the same building, but not all recorded building have all 4 meters. Also included are several details about each building and weather data from the closest weather station.
 
-#### /health
-- Request: "GET"
-- Returns: "ok" for 200 status
-- Format: String
-
-#### /version
-- Request: "GET"
-- Returns: REST API version and model package version
-- Format: JSON
-
-#### /v1/predict
-- Request: "POST"
-- Body: Meter and weather data
-- Returns: Energy consumption predictions in kWh and model version
-- Format: JSON
-
-#### NOTE: Making a POST request to the prediction endpoint requires BOTH the meter and weather data in the body. This can either be sent as raw JSON text or as JSON files labeled with keys:
-- Format: {"meter": {METER DATA}, "weather": {WEATHER DATA}}
-- Meter data must have the following columns: ["timestamp", "building_id", "meter"]
-- Weather data must have the following columns: ["timestamp", "site_id", "air_temperature", "dew_temperature", "sea_level_pressure", "wind_speed", "wind_direction"]
+### Source
+https://www.kaggle.com/c/ashrae-energy-prediction/data
