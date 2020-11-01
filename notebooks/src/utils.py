@@ -3,6 +3,7 @@ import holidays
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
 from feature_engine.categorical_encoders import RareLabelCategoricalEncoder, MeanCategoricalEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_squared_log_error
@@ -16,8 +17,6 @@ import optuna
 ####################      GENERAL      ####################
 
 
-
-
 def reduce_mem_usage(df):
     
     '''
@@ -25,35 +24,49 @@ def reduce_mem_usage(df):
         Recast column data types to reduce memory usage
         
     Input:
-        Pandas dataframe
+        df - Pandas dataframe
         
     Output:
-        Pandas dataframe with reduced memory usage
+        Pandas dataframe with reduced size
     '''
     
+    # Unsigned integer upper limit
     uint8_lim = 2 ** 8
     uint16_lim = 2 ** 16
     uint32_lim = 2 ** 32
 
+    # Signed integer upper limit
+    int8_lim = 2 ** 7
+    int16_lim = 2 ** 15
+    int32_lim = 2 ** 31
+
     for col in df.columns:
+        # Floats
         if df[col].dtype == 'float64':
             df[col] = df[col].astype('float32')
-        elif str(df[col].dtype) in 'uint64':
-            if df[col].max() < uint8_lim and df[col].min() >= 0:
+            
+        # Unsigned integers
+        elif str(df[col].dtype) in 'uint64' and df[col].min() >= 0:
+            if df[col].max() < uint8_lim:
                 df[col] = df[col].astype('uint8')
-            elif df[col].max() < uint16_lim and df[col].min() >= 0:
+            elif df[col].max() < uint16_lim:
                 df[col] = df[col].astype('uint16')
-            elif df[col].max() < uint32_lim and df[col].min() >= 0:
+            elif df[col].max() < uint32_lim:
                 df[col] = df[col].astype('uint32')
-#         elif df[col].dtype == 'O':
-#             df[col] = df[col].astype('category')
+                
+        # Signed Integers
+        elif str(df[col].dtype) == 'int64':
+            if df[col].min() >= -int8_lim and df[col].max() < int8_lim:
+                df[col] = df[col].astype('int8')
+            elif df[col].min() >= -int16_lim and df[col].max() < int16_lim:
+                df[col] = df[col].astype('int16')
+            elif df[col].min() >= -int32_lim and df[col].max() < int32_lim:
+                df[col] = df[col].astype('int32')
                 
     return df
 
 
-
-
-def get_stats(df):
+def get_summary(df):
     
     '''
     Function:
@@ -63,22 +76,20 @@ def get_stats(df):
         df - Pandas dataframe
         
     Output:
-        Pandas dataframe similar to the DataFrame.describe() method
+        Pandas dataframe similar to the Pandas.DataFrame.describe() method
     '''
     
-    stats = pd.DataFrame(df.count(), columns=['count_'])
-    stats['missing_'] = df.shape[0] - stats.count_
-    stats['mean_'] = df.mean()
-    stats['std_'] = df.std()
-    stats['min_'] = df.min().map(lambda n: np.NaN if type(n) not in [int, float] else n)
-    stats['max_'] = df.max().map(lambda n: np.NaN if type(n) not in [int, float] else n)
-    stats['dtype_'] = df.dtypes
+    stats = pd.DataFrame(df.count(), columns=['_count'])
+    stats['_missing'] = df.shape[0] - stats._count
+    stats['_mean'] = df.mean()
+    stats['_std'] = df.std()
+    stats['_min'] = df.min()
+    stats['_max'] = df.max()
+    stats['_dtype'] = df.dtypes
     return stats.T.fillna('-')
 
 
-
-
-def calc_outlier_threshold(df, col_name, stat='std', mult=3):
+def get_outlier_threshold(df, col_name, stat='std', mult=3):
     
     '''
     Function:
@@ -91,15 +102,17 @@ def calc_outlier_threshold(df, col_name, stat='std', mult=3):
         mult (optional) - multiplier for the stat
     
     Output:
-        A list of the lower and upper outlier thresholds
+        List of the lower and upper outlier thresholds
     '''
     
+    # Calculate threshold based on standard deviation
     if stat == 'std':
         avg = df[col_name].mean()
         stdev = df[col_name].std()
         lower = avg - stdev * mult
         upper = avg + stdev * mult
     
+    # Calculate threshold based on interquartile range
     if stat == 'iqr':
         q25 = df[col_name].quantile(0.25)
         q75 = df[col_name].quantile(0.75)
@@ -112,9 +125,96 @@ def calc_outlier_threshold(df, col_name, stat='std', mult=3):
 
 
 
+####################      CONVERSION      ####################
+
+
+def convert_readings(df, site_num, meter_type, conversion,
+                     site_col='site_id', meter_col='meter', reading_col='meter_reading'):
+    
+    '''
+    Function:
+        Convert the meter reading units of a specified meter type in a specified site
+        
+    Input:
+        df - Pandas dataframe with the columns: site, meter type, and meter reading
+        site_num - number of site
+        meter_type - meter type number
+        conversion - string to specify unit conversions in the format "{unit1}_to_{unit2}"
+        site_col (optional) - name of site column
+        meter_col (optional) - name of meter type column
+        reading_col (optional) - name of meter reading column
+        
+        Note: pass in site_col, meter_col, and reading_col if different from defaults
+        
+    Output:
+        Pandas dataframe with converted units for a given meter type in a given site
+    '''
+    
+    # Conversion multipliers
+    kbtu_to_kwh = 0.2931
+    kwh_to_kbtu = 3.4118
+    kbtu_to_ton = 0.0833
+    ton_to_kbtu = 12
+    
+    mult = eval(conversion)
+    df.loc[(df[site_col] == site_num) & (df[meter_col] == meter_type), reading_col] *= mult
+    return df
+
+
+
+
+def calc_rel_humidity(T, Td):
+    
+    '''
+    Function:
+        Calculate the relative humidity using air temperature and dew temperature
+        
+    Input:
+        T - air temperature in degrees Celsius
+        Td - dew temperature in degrees Celsius
+        
+    Output:
+        Relative humidity
+        
+    Source:
+        https://www.weather.gov/media/epz/wxcalc/vaporPressure.pdf
+    '''
+    
+    e = 6.11 * 10.0 ** (7.5 * Td / (237.3 + Td))
+    es = 6.11 * 10.0 ** (7.5 * T / (237.3 + T))
+    return e * 100 / es
+
+
+
+
+def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
+    
+    '''
+    Function:
+        Convert timestamps to local time
+        
+    Input:
+        df - Pandas dataframe with a site column and time column
+        timezones - list of timezone offsets
+        site_col (optional) - name of column containing sites
+        time_col (optional) - name of column containing timestamps
+        
+        Note: pass in site_col and time_col if different from defaults
+        
+    Output:
+        Pandas dataframe with local time
+    '''
+    
+    offset = df[site_col].map(lambda s: np.timedelta64(timezones[s], 'h'))
+    df[time_col] += offset
+    return df
+
+
+
+
+
+
 ####################      DATAFRAME TRANSFORMATION      ####################
-
-
 
 
 def reidx_site_time(df, tstart, tend, site_col='site_id', time_col='timestamp'):
@@ -646,94 +746,6 @@ def objective(trial):
 
     
     
-
-
-
-####################      CONVERSION      ####################
-
-
-
-
-def calc_rel_humidity(T, Td):
-    
-    '''
-    Function:
-        Calculate the relative humidity using air temperature and dew temperature
-        
-    Input:
-        T - air temperature in degrees Celsius
-        Td - dew temperature in degrees Celsius
-        
-    Output:
-        Relative humidity
-        
-    Source:
-        https://www.weather.gov/media/epz/wxcalc/vaporPressure.pdf
-    '''
-    
-    e = 6.11 * 10.0 ** (7.5 * Td / (237.3 + Td))
-    es = 6.11 * 10.0 ** (7.5 * T / (237.3 + T))
-    return e * 100 / es
-
-
-
-
-def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
-    
-    '''
-    Function:
-        Convert timestamps to local time
-        
-    Input:
-        df - Pandas dataframe with a site column and time column
-        timezones - list of timezone offsets
-        site_col (optional) - name of column containing sites
-        time_col (optional) - name of column containing timestamps
-        
-        Note: pass in site_col and time_col if different from defaults
-        
-    Output:
-        Pandas dataframe with local time
-    '''
-    
-    offset = df[site_col].map(lambda s: np.timedelta64(timezones[s], 'h'))
-    df[time_col] += offset
-    return df
-
-
-
-
-def convert_readings(df, site_num, meter_type, conversion, site_col='site_id', meter_col='meter', reading_col='meter_reading'):
-    
-    '''
-    Function:
-        Convert the meter reading units of a specified meter type in a specified site
-        
-    Input:
-        df - Pandas dataframe with a site column, meter type column, and meter reading column
-        site_num - site number to make conversions in
-        meter_type - meter type to make conversions for
-        conversion - string to specify unit conversions in the format '{unit1}_to_{unit2}'
-        site_col (optional) - name of column containing sites
-        meter_col (optional) - name of column containing meter types
-        reading_col (optional) - name of column containing meter readings
-        
-        Note: pass in site_col, meter_col, and reading_col if different from defaults
-        
-    Output:
-        Pandas dataframe with converted units for a given meter type in a given site
-    '''
-    
-    # Conversion multipliers
-    kbtu_to_kwh = 0.2931
-    kwh_to_kbtu = 3.4118
-    kbtu_to_ton = 0.0833
-    ton_to_kbtu = 12
-    
-    mult = eval(conversion)
-    df.loc[(df[site_col] == site_num) & (df[meter_col] == meter_type), reading_col] *= mult
-    return df
-
 
 
 

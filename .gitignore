@@ -4,6 +4,9 @@ dist/
 *.idea/
 *.ipynb_checkpoints/
 *cache*/
+resources/
+objects/
+data/
 data_test/
 lgb/
 *DS_Store*

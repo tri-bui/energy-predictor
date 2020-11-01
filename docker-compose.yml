@@ -2,7 +2,7 @@ version: "3"
 services:
   app:
     image: gep
-    working_dir: /opt/gep_gbm/gb_api/gb_api
+    working_dir: /opt/energy-predictor/gb_api/gb_api
     ports:
       - 8000:5000
     command: bash ./run.sh
