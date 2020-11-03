@@ -161,9 +161,7 @@ def convert_readings(df, site_num, meter_type, conversion,
     return df
 
 
-
-
-def calc_rel_humidity(T, Td):
+def get_rel_humidity(T, Td):
     
     '''
     Function:
@@ -185,8 +183,6 @@ def calc_rel_humidity(T, Td):
     return e * 100 / es
 
 
-
-
 def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
     
     '''
@@ -194,10 +190,10 @@ def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
         Convert timestamps to local time
         
     Input:
-        df - Pandas dataframe with a site column and time column
+        df - Pandas dataframe with columns: site and time
         timezones - list of timezone offsets
-        site_col (optional) - name of column containing sites
-        time_col (optional) - name of column containing timestamps
+        site_col (optional) - name of site column
+        time_col (optional) - name of time column
         
         Note: pass in site_col and time_col if different from defaults
         
@@ -212,12 +208,126 @@ def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
 
 
 
+####################      MISSING VALUES      ####################
 
 
+def missing_vals_by_site(df, pct=False, site_col='site_id', time_col='timestamp'):
+    
+    '''
+    Function:
+        Count missing values by site
+    
+    Input:
+        df - Pandas dataframe with columns: site and time
+        pct (optional) - boolean to indicate whether to convert the output to percentages
+        site_col (optional) - name of site column
+        time_col (optional) - name of time column
+        
+        Note: pass in site_col and time_col if different from defaults
+    
+    Output:
+        Pandas dataframe displaying a matrix of missing values by site
+    '''
+
+    # # missing
+    missing = df.groupby(site_col).count()
+    for col in missing.columns[1:]:
+        missing[col] = missing.timestamp - missing[col]
+    missing.columns = [col if col == time_col else f'missing_{col}' for col in missing.columns]
+    
+    # % missing
+    pct_missing = missing.copy()
+    for col in pct_missing.columns[1:]:
+        pct_missing[col] = round(100 * missing[col] / missing.timestamp, 2)
+    pct_missing.columns = [col if col == time_col else f'pct_{col}' for col in pct_missing.columns]
+    
+    return pct_missing if pct else missing
+    
+    
+def fill_missing(df, cols_to_ffill, cols_to_interp_lin, cols_to_interp_cubic, site_col='site_id'):
+    
+    '''
+    Function:
+        Fill missing values by site
+        
+        Note: sites missing 100% of the values will not be filled
+        
+    Input:
+        df - Pandas dataframe with site column
+        cols_to_ffill - list of columns to perform a simple forward fill and backward fill on
+        cols_to_interp_lin - list of columns to perform linear interpolation on
+        cols_to_interp_cubic - list of columns to perform cubic interpolation on
+        site_col (optional) - name of site column
+        
+        Note: cols_to_interp_lin and cols_to_interp_cubic will also be forward-filled and backward-filled (after interpolation) to fill the beginning and end
+        Note: pass in site_col if different from default
+        
+    Output:
+        Pandas dataframe with missing data filled
+    '''
+    
+    for col in df.columns:
+        
+        if col in cols_to_ffill:
+            df[col] = df.groupby(site_col)[col] \
+                        .transform(lambda s: s.fillna(method='ffill') \
+                                              .fillna(method='bfill'))
+                    
+        if col in cols_to_interp_lin:
+            df[col] = df.groupby(site_col)[col] \
+                        .transform(lambda s: s.interpolate('linear', limit_direction='both') \
+                                              .fillna(method='ffill') \
+                                              .fillna(method='bfill'))
+            
+        if col in cols_to_interp_cubic:
+            df[col] = df.groupby(site_col)[col] \
+                        .transform(lambda s: s.interpolate('cubic', limit_direction='both') \
+                                              .fillna(method='ffill') \
+                                              .fillna(method='bfill'))
+
+    return df
+
+
+def print_missing_readings(df, bldg_col='building_id', meter_col='meter', time_col='timestamp'):
+    
+    '''
+    Function:
+        Print the details of missing meter readings
+        
+    Input:
+        df - Pandas dataframe with columns: building, meter type, and time
+        bldg_col (optional) - name of building column
+        meter_col (optional) - name of meter column
+        time_col (optional) - name of time column
+        
+        Note: pass in bldg_col, meter_col, and time_col if different from defaults
+        
+    Output:
+        None
+    '''
+    
+    types = ['electricity', 'chilledwater', 'steam', 'hotwater']
+    
+    by_bm = df.groupby([bldg_col, meter_col]).count().reset_index()
+    m_count = by_bm[meter_col].value_counts()
+    
+    metr_m = by_bm[by_bm[time_col] != 8784]
+    bldg_m = metr_m[bldg_col].nunique()
+    type_m = metr_m[meter_col].value_counts()
+    
+    print(f'{bldg_m} different buildings ({bldg_m * 100 // by_bm[bldg_col].nunique()}%) have meters that are missing readings')
+    print(f'A total of {metr_m.shape[0]} meters ({metr_m.shape[0] * 100 // by_bm.shape[0]}%) are missing readings\n')
+
+    for i in range(type_m.shape[0]):
+        print(f'{type_m[i]} {types[i]} meters ({type_m[i] * 100 // m_count[i]}%) are missing readings')
+        
+        
+        
+        
 ####################      DATAFRAME TRANSFORMATION      ####################
 
 
-def reidx_site_time(df, tstart, tend, site_col='site_id', time_col='timestamp'):
+def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'):
     
     '''
     Function:
@@ -225,8 +335,8 @@ def reidx_site_time(df, tstart, tend, site_col='site_id', time_col='timestamp'):
         
     Input:
         df - Pandas dataframe with a site column and time column
-        tstart - first timestamp in the format '{month}/{day}/{year} hh:mm:ss'
-        tend - last timestamp in the same format
+        t_start - first timestamp in the format '{month}/{day}/{year} hh:mm:ss'
+        t_end - last timestamp in the same format
         site_col (optional) - name of column containing sites
         time_col (optional) - name of column containing timestamps
         
@@ -242,7 +352,7 @@ def reidx_site_time(df, tstart, tend, site_col='site_id', time_col='timestamp'):
     frame = frame.reindex(
         pd.MultiIndex.from_product([
             sites,
-            pd.date_range(start=tstart, end=tend, freq='H')
+            pd.date_range(start=t_start, end=t_end, freq='H')
         ])
     )
     
@@ -336,135 +446,6 @@ def deg_to_components(df, deg_col):
 
 
 
-####################      MISSING VALUES      ####################
-
-
-
-
-def locate_missing(df, pct=False, site_col='site_id', time_col='timestamp'):
-    
-    '''
-    Function:
-        Count missing values by site
-    
-    Input:
-        df - Pandas dataframe with a site column and time column
-        pct (optional) - boolean to indicate whether or not to convert the output to percentages
-        site_col (optional) - name of column containing sites
-        time_col (optional) - name of column containing timestamps
-        
-        Note: pass in site_col and time_col if different from defaults
-    
-    Output:
-        Pandas dataframe displaying a matrix of missing values by site
-    '''
-
-    # # missing
-    
-    missing = df.groupby(site_col).count()
-    
-    for col in df.columns[2:]:
-        missing[col] = missing.timestamp - missing[col]
-    
-    missing.columns = [col if col == time_col else f'missing_{col}' for col in missing.columns]
-    
-    # % missing
-    
-    pct_missing = missing.copy()
-    
-    for col in missing.columns[1:]:
-        pct_missing[col] = round(missing[col] * 100 / missing.timestamp, 2)
-        
-    pct_missing.columns = [col if col == time_col else f'pct_{col}' for col in pct_missing.columns]
-    
-    return pct_missing if pct else missing
-    
-    
-    
-
-def fill_missing(df, cols_to_ffill, cols_to_interp_lin, cols_to_interp_cubic, site_col='site_id'):
-    
-    '''
-    Function:
-        Fill missing values by site
-        
-    Input:
-        df - Pandas dataframe with a site column
-        site_col - name of column containing sites
-        cols_to_ffill - list of columns to perform a simple forward fill and backward fill on
-        cols_to_interp_lin - list of columns to perform linear interpolation on
-        cols_to_interp_cubic - list of columns to perform cubic interpolation on
-        site_col (optional) - name of column containing sites
-        
-        Note: cols_to_interp_lin and cols_to_interp_cubic will also be forward-filled and backward-filled (after interpolation) to fill the beginning and end
-        Note: pass in site_col if different from default
-        
-    Output:
-        Pandas dataframe with missing data filled
-        
-        Note: sites missing 100% of the values will not be filled
-    '''
-    
-    for col in df.columns:
-        
-        if col in cols_to_ffill:
-            df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.fillna(method='ffill') \
-                                              .fillna(method='bfill'))
-                    
-        if col in cols_to_interp_lin:
-            df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.interpolate('linear', limit_direction='both') \
-                                              .fillna(method='ffill') \
-                                              .fillna(method='bfill'))
-            
-        if col in cols_to_interp_cubic:
-            df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.interpolate('cubic', limit_direction='both') \
-                                              .fillna(method='ffill') \
-                                              .fillna(method='bfill'))
-
-    return df
-
-
-
-
-def print_missing_readings(df, building_col='building_id', meter_col='meter', time_col='timestamp'):
-    
-    '''
-    Function:
-        Print the details of missing meter readings
-        
-    Input:
-        df - Pandas dataframe with a building column, meter type column, and time column
-        building_col (optional) - name of column containing buildings
-        meter_col (optional) - name of column containing meter types
-        time_col (optional) - name of column containing timestamps
-        
-        Note: pass in building_col, meter_col, and time_col if different from defaults
-        
-    Output:
-        None
-    '''
-    
-    types = ['electricity', 'chilledwater', 'steam', 'hotwater']
-    
-    by_bm = df.groupby([building_col, meter_col]).count().reset_index()
-    m_count = by_bm[meter_col].value_counts()
-    
-    metr_m = by_bm[by_bm[time_col] != 8784]
-    bldg_m = metr_m[building_col].nunique()
-    type_m = metr_m[meter_col].value_counts()
-    
-    print(f'{bldg_m} different buildings ({bldg_m * 100 // by_bm[building_col].nunique()}%) have meters that are missing readings')
-    print(f'A total of {metr_m.shape[0]} meters ({metr_m.shape[0] * 100 // by_bm.shape[0]}%) are missing readings\n')
-
-    for i in range(type_m.shape[0]):
-        print(f'{type_m[i]} {types[i]} meters ({type_m[i] * 100 // m_count[i]}%) are missing readings')
-        
-        
-        
-        
 ####################      FEATURES      ####################
 
 
