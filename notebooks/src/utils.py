@@ -89,7 +89,7 @@ def get_summary(df):
     return stats.T.fillna('-')
 
 
-def get_outlier_threshold(df, col_name, stat='std', mult=3):
+def get_outlier_threshold(df, col_name, stat='std', multiplier=3):
     
     '''
     Function:
@@ -99,7 +99,7 @@ def get_outlier_threshold(df, col_name, stat='std', mult=3):
         df - Pandas dataframe
         col_name - name of column to calculate threshold for
         stat (optional) - either standard deviation (std) or interquantile range (iqr)
-        mult (optional) - multiplier for the stat
+        multiplier (optional) - multiplier for the stat
     
     Output:
         List of the lower and upper outlier thresholds
@@ -109,16 +109,16 @@ def get_outlier_threshold(df, col_name, stat='std', mult=3):
     if stat == 'std':
         avg = df[col_name].mean()
         stdev = df[col_name].std()
-        lower = avg - stdev * mult
-        upper = avg + stdev * mult
+        lower = avg - stdev * multiplier
+        upper = avg + stdev * multiplier
     
     # Calculate threshold based on interquartile range
     if stat == 'iqr':
         q25 = df[col_name].quantile(0.25)
         q75 = df[col_name].quantile(0.75)
         iqr = q75 - q25
-        lower = q25 - iqr * mult
-        upper = q75 + iqr * mult
+        lower = q25 - iqr * multiplier
+        upper = q75 + iqr * multiplier
 
     return [lower, upper]
 
@@ -128,7 +128,7 @@ def get_outlier_threshold(df, col_name, stat='std', mult=3):
 ####################      CONVERSION      ####################
 
 
-def convert_readings(df, site_num, meter_type, conversion,
+def convert_readings(df, site_num, meter_num, conversion,
                      site_col='site_id', meter_col='meter', reading_col='meter_reading'):
     
     '''
@@ -138,7 +138,7 @@ def convert_readings(df, site_num, meter_type, conversion,
     Input:
         df - Pandas dataframe with the columns: site, meter type, and meter reading
         site_num - number of site
-        meter_type - meter type number
+        meter_num - meter type number
         conversion - string to specify unit conversions in the format "{unit1}_to_{unit2}"
         site_col (optional) - name of site column
         meter_col (optional) - name of meter type column
@@ -156,8 +156,9 @@ def convert_readings(df, site_num, meter_type, conversion,
     kbtu_to_ton = 0.0833
     ton_to_kbtu = 12
     
+    # Convert using multiplier
     mult = eval(conversion)
-    df.loc[(df[site_col] == site_num) & (df[meter_col] == meter_type), reading_col] *= mult
+    df.loc[(df[site_col] == site_num) & (df[meter_col] == meter_num), reading_col] *= mult
     return df
 
 
@@ -244,7 +245,7 @@ def missing_vals_by_site(df, pct=False, site_col='site_id', time_col='timestamp'
     return pct_missing if pct else missing
     
     
-def fill_missing(df, cols_to_ffill, cols_to_interp_lin, cols_to_interp_cubic, site_col='site_id'):
+def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols, site_col='site_id'):
     
     '''
     Function:
@@ -254,9 +255,9 @@ def fill_missing(df, cols_to_ffill, cols_to_interp_lin, cols_to_interp_cubic, si
         
     Input:
         df - Pandas dataframe with site column
-        cols_to_ffill - list of columns to perform a simple forward fill and backward fill on
-        cols_to_interp_lin - list of columns to perform linear interpolation on
-        cols_to_interp_cubic - list of columns to perform cubic interpolation on
+        ffill_cols - list of columns to perform a simple forward fill and backward fill on
+        lin_interp_cols - list of columns to perform linear interpolation on
+        cub_interp_cols - list of columns to perform cubic interpolation on
         site_col (optional) - name of site column
         
         Note: cols_to_interp_lin and cols_to_interp_cubic will also be forward-filled and backward-filled (after interpolation) to fill the beginning and end
@@ -268,18 +269,18 @@ def fill_missing(df, cols_to_ffill, cols_to_interp_lin, cols_to_interp_cubic, si
     
     for col in df.columns:
         
-        if col in cols_to_ffill:
+        if col in ffill_cols:
             df[col] = df.groupby(site_col)[col] \
                         .transform(lambda s: s.fillna(method='ffill') \
                                               .fillna(method='bfill'))
                     
-        if col in cols_to_interp_lin:
+        if col in lin_interp_cols:
             df[col] = df.groupby(site_col)[col] \
                         .transform(lambda s: s.interpolate('linear', limit_direction='both') \
                                               .fillna(method='ffill') \
                                               .fillna(method='bfill'))
             
-        if col in cols_to_interp_cubic:
+        if col in cub_interp_cols:
             df[col] = df.groupby(site_col)[col] \
                         .transform(lambda s: s.interpolate('cubic', limit_direction='both') \
                                               .fillna(method='ffill') \
@@ -306,20 +307,40 @@ def print_missing_readings(df, bldg_col='building_id', meter_col='meter', time_c
         None
     '''
     
+    # Meter types
     types = ['electricity', 'chilledwater', 'steam', 'hotwater']
     
-    by_bm = df.groupby([bldg_col, meter_col]).count().reset_index()
-    m_count = by_bm[meter_col].value_counts()
+    # Number of readings from each meter
+    n_readings = df.groupby([bldg_col, meter_col], as_index=False).count()
+    n_bldgs = n_readings[bldg_col].nunique() # number of buildings
+    n_meters = n_readings[meter_col].value_counts() # number of readings from each meter
     
-    metr_m = by_bm[by_bm[time_col] != 8784]
-    bldg_m = metr_m[bldg_col].nunique()
-    type_m = metr_m[meter_col].value_counts()
+    # Meters with missing readings
+    meters_with_missing = n_readings[n_readings[time_col] != 366 * 24] # filter out full readings
+    pct_meters_with_missing = 100 * meters_with_missing.shape[0] // n_readings.shape[0] # percent
     
-    print(f'{bldg_m} different buildings ({bldg_m * 100 // by_bm[bldg_col].nunique()}%) have meters that are missing readings')
-    print(f'A total of {metr_m.shape[0]} meters ({metr_m.shape[0] * 100 // by_bm.shape[0]}%) are missing readings\n')
-
-    for i in range(type_m.shape[0]):
-        print(f'{type_m[i]} {types[i]} meters ({type_m[i] * 100 // m_count[i]}%) are missing readings')
+    # Buildings with meter(s) with missing readings
+    n_bldgs_with_missing = meters_with_missing[bldg_col].nunique() # number
+    pct_bldgs_with_missing = 100 * n_bldgs_with_missing // n_readings[bldg_col].nunique() # percent
+    
+    # Total missing readings by the 4 meter types
+    n_missing_by_type = meters_with_missing[meter_col].value_counts() # number
+    pct_missing_by_type = 100 * n_missing_by_type // n_meters # percent
+    
+    # Total
+    print('Buildings:', n_bldgs)
+    print('Total meters:', n_meters.sum())
+    for i in range(len(types)):
+        print(types[i].capitalize(), 'meters:', n_meters[i])
+    
+    # Total missing
+    print('\nBuildings with meter(s) with missing readings:',
+          n_bldgs_with_missing, f'({pct_bldgs_with_missing}%)')
+    print('Total meters with missing readings:',
+          meters_with_missing.shape[0], f'({pct_meters_with_missing}%)')
+    for i in range(len(types)):
+        print(types[i].capitalize(), 'meters with missing readings:',
+              n_missing_by_type[i], f'({pct_missing_by_type[i]}%)')
         
         
         
