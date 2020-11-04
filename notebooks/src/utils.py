@@ -748,92 +748,95 @@ def objective(trial):
 
     
     
-
-
-
+    
 ####################      PLOTTING      ####################
 
 
-
-
-def plot_dist(df, cols):
+def plot_hist(df, cols, bins=20, colors='bgrcmykw'):
     
     '''
     Function:
-        Plot the value distribution of certain columns of a dataframe
+        Plot the value distribution of specified columns of a dataframe
         
     Input:
         df - Pandas dataframe with numeric columns
-        cols - an iterable or columns to plot
+        cols - array-like of column indices to plot
+        bins - number of bins to use for the histograms
+        colors - iterable of colors to use for subplots
         
     Output:
         None
     '''
     
     colors = 'bgrcmykw'
-    for col in cols:
+    for i in cols:
         fig = plt.figure(figsize=(16, 4))
-        df.iloc[:, col].plot.hist(bins=16, color=colors[cols.index(col)])
-        plt.xlabel(df.columns[col].replace('_', ' ').capitalize())
+        df.iloc[:, i].plot.hist(bins=bins, color=colors[i])
+        plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
 
 
-
-
-def plot_readings(df, buildings, freq=None, group=None, start=None, end=None, ticks=None, buildings_first=False, time_col='timestamp', building_col='building_id', meter_col='meter', reading_col='meter_reading'):
+def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None, ticks=None,
+                  bldg_first=False, figsize=(16, 4), time_col='timestamp',
+                  bldg_col='building_id', meter_col='meter', read_col='meter_reading'):
     
     '''
     Function:
         Plot readings from 1 or more of each type of meter
         
     Input:
-        df - Pandas dataframe with a building column, meter type column, and time column
-        buildings - an iterable of buildings
-        freq (optional) - resampling frequency
-        group (optional) - column or list of columns to group by
-        start (optional) - the start index to slice buildings on
-        end (optional) - the end index to slice buildings on
-        ticks (optional) - a range of xtick locations
-        buildings_first (optional) - a boolean to indicate whether or not to iterate through buildings first then meters
-        time_col (optional) - name of column containing timestamps
-        building_col (optional) - name of column containing buildings
-        meter_col (optional) - name of column containing meter types
-        reading_col (optional) - name of column containing meter readings
+        df - Pandas dataframe with columns: building, meter type, and time
+        bldg_list - array-like of buildings
+        start (optional) - start index to slice buildings on
+        end (optional) - end index to slice buildings on
+        resample (optional) - resampling frequency if resampling by time
+        groupby (optional) - list of columns to group by if aggregating
+        ticks (optional) - range of xtick locations
+        bldg_first (optional) - boolean to indicate whether to iterate through
+                                     buildings before meters
+        figsize (optional) - tuple with width and height of plot
+        time_col (optional) - name of time column
+        bldg_col (optional) - name of building column
+        meter_col (optional) - name of meter type column
+        read_col (optional) - name of meter reading column
         
-        Note: pass in freq if resampling or group if aggregating
-        Note: pass in time_col, building_col, meter_col, and reading_col if different from defaults
+        Note: pass in time_col, bldg_col, meter_col, and read_col if different from defaults
         
     Output:
         None
     '''
     
+    # Set time as index
     df = df.set_index(time_col)
     types = ['electricity', 'chilledwater', 'steam', 'hotwater']
     
-    if buildings_first:
-        for b in buildings:
-            for m in df[df[building_col] == b][meter_col].unique():
-                fig = plt.figure(figsize=(16, 4))
-                bm = df[(df[building_col] == b) & (df[meter_col] == m)]
-                bm.resample('d').mean()[reading_col].plot()
+    # Plot readings from all meters of each building in the list
+    if bldg_first:
+        for b in bldg_list: # for each building
+            for m in df[df[bldg_col] == b][meter_col].unique(): # for each meter
+                fig = plt.figure(figsize=figsize)
+                bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
+                bm.resample('d').mean()[read_col].plot() # plot daily mean
                 plt.title(f'Building {b} ({types[m]} meter)')
                 plt.ylabel('meter_reading')
+                
+    # Plot readings from a number of each meter type
     else:
-        for m in range(4):
-            for b in buildings[m][start:end]:
+        for m in range(len(types)): # for each meter type
+            for b in bldg_list[m][start:end]: # for each building from start to end
                 fig = plt.figure(figsize=(16, 4))
-                bm = df[(df[building_col] == b) & (df[meter_col] == m)]
-                if freq:
-                    bm = bm.resample(freq).mean()
-                if group:
-                    bm = bm.groupby(group).mean()
-                bm[reading_col].plot(xticks=ticks)
+                bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
+                if resample: # if resampling time frequency
+                    bm = bm.resample(resample).mean()
+                if groupby: # if aggregating with mean
+                    bm = bm.groupby(groupby).mean()
+                bm[read_col].plot(xticks=ticks)
                 plt.title(f'Building {b} ({types[m]} meter)')
                 plt.ylabel('meter_reading')
 
                 
-                
-                
-def show_elec_readings(df, by, idx='timestamp', vals='meter_reading', freq=None, legend_pos=(1, 1), legend_col=1, cols_to_sep=[], meter_col='meter', type_col='type'):
+def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', pivot_vals='meter_reading',
+                        freq=None, legend_pos=(1, 1), legend_col=1, cols_to_sep=[],
+                        meter_col='meter', type_col='type'):
     
     '''
     Function:
@@ -841,9 +844,9 @@ def show_elec_readings(df, by, idx='timestamp', vals='meter_reading', freq=None,
         
     Input:
         df - Pandas dataframe with 2 meter type columns (1 is integer-encoded)
-        by - name of column to pivot to columns
-        idx (optional) - name of column to set as index in pivot table
-        vals (optional) - name of column to aggregate from for pivot table
+        pivot_col - name of column to pivot to columns
+        pivot_idx (optional) - name of column to pivot to index
+        pivot_vals (optional) - name of column to aggregate for pivot table
         freq (optional) - resampling frequency
         legend_pos (optional) - a tuple to indicate the legend's anchor position
         legend_col (optional) - number of columns in legend
@@ -858,7 +861,7 @@ def show_elec_readings(df, by, idx='timestamp', vals='meter_reading', freq=None,
         Pandas dataframe of a pivot table
     '''
     
-    elec = df.pivot_table(index=idx, columns=by, values=vals, aggfunc='mean')
+    elec = df.pivot_table(index=pivot_idx, columns=pivot_col, values=pivot_vals, aggfunc='mean')
     if freq:
         elec = elec.resample(freq).mean()
     
