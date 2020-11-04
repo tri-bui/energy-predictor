@@ -878,40 +878,43 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
     
     '''
     Function:
-        Plot electric meter readings by a specified feature
+        Pivot and plot electric meter readings by a specified feature,
+        optionally resampling by time
         
     Input:
         df - Pandas dataframe with 2 meter type columns (1 is integer-encoded)
         pivot_col - name of column to pivot to columns
         pivot_idx (optional) - name of column to pivot to index
         pivot_vals (optional) - name of column to aggregate for pivot table
-        freq (optional) - resampling frequency
-        legend_pos (optional) - a tuple to indicate the legend's anchor position
+        freq (optional) - resampling frequency if resampling by time
+        legend_pos (optional) - tuple to indicate the legend's anchor position
         legend_col (optional) - number of columns in legend
         cols_to_sep (optional) - list of columns to plot separately
-        meter_col (optional) - name of column containing meter type integers
-        type_col (optional) - name of column containing meter type strings
+        meter_col (optional) - name of meter type number column as integers
+        type_col (optional) - name of meter type column as strings
         
         Note: plot columns with a different scale separately for a better view
         Note: pass in time_col, building_col, meter_col, and reading_col if 
               different from defaults
         
     Output:
-        Pandas dataframe of a pivot table
+        Pandas dataframe of the pivot table
     '''
     
     elec = df.pivot_table(index=pivot_idx, columns=pivot_col,
                           values=pivot_vals, aggfunc='mean')
-    if freq:
+    if freq: # resample by time
         elec = elec.resample(freq).mean()
     
-    elec.drop(cols_to_sep, axis=1).plot(figsize=(16, 6))
+    # Plot main group
+    elec.drop(cols_to_sep, axis=1).plot(figsize=(16, 5))
     plt.title('Electric meter readings')
     plt.ylabel('meter_reading')
     plt.legend(bbox_to_anchor=legend_pos, ncol=legend_col, fancybox=True)
     
+    # Plot separated columns
     if cols_to_sep:
-        elec[cols_to_sep].plot(figsize=(16, 6))
+        elec[cols_to_sep].plot()
         plt.title('Electric meter readings')
         plt.ylabel('meter_reading')
         plt.legend(bbox_to_anchor=(1, 1), fancybox=True)
