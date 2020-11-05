@@ -405,44 +405,6 @@ def extract_dt_components(df, dt_components, time_col='timestamp'):
     return df
 
 
-
-
-def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'):
-    
-    '''
-    Function:
-        Reindex dataframe to include a timestamp for every hour within the time 
-        interval
-        
-    Input:
-        df - Pandas dataframe with a site column and time column
-        t_start - first timestamp in the format '{month}/{day}/{year} hh:mm:ss'
-        t_end - last timestamp in the same format
-        site_col (optional) - name of column containing sites
-        time_col (optional) - name of column containing timestamps
-        
-        Note: pass in site_col and time_col if different from defaults
-        
-    Output:
-        Pandas dataframe with full timestamp
-    '''
-    
-    sites = df[site_col].unique()
-    frame = df.set_index([site_col, time_col])
-    
-    frame = frame.reindex(
-        pd.MultiIndex.from_product([
-            sites,
-            pd.date_range(start=t_start, end=t_end, freq='H')
-        ])
-    )
-    
-    frame.index.rename([site_col, time_col], inplace=True)
-    return frame.reset_index()
-
-
-
-
 def get_site(df, site_num, time_idx=False, site_col='site_id', time_col='timestamp'):
     
     '''
@@ -451,11 +413,11 @@ def get_site(df, site_num, time_idx=False, site_col='site_id', time_col='timesta
         
     Input:
         df - Pandas dataframe with a site column and time column
-        site_num - site number to extract
-        time_idx (optional) - boolean to indicate weather or not to set the
+        site_num - number of site to extract
+        time_idx (optional) - boolean to indicate weather to set the
                               time as the index
-        site_col (optional) - name of column containing sites
-        time_col (optional) - name of column containing timestamps
+        site_col (optional) - name of site column
+        time_col (optional) - name of time column
         
         Note: pass in site_col and time_col if different from defaults
         
@@ -469,6 +431,40 @@ def get_site(df, site_num, time_idx=False, site_col='site_id', time_col='timesta
     return df
 
 
+def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'):
+    
+    '''
+    Function:
+        Reindex dataframe to include a timestamp for every hour within the time 
+        interval for every site
+        
+    Input:
+        df - Pandas dataframe with columns: site and time
+        t_start - first timestamp in the format '{month}/{day}/{year} hh:mm:ss'
+        t_end - last timestamp in the same format
+        site_col (optional) - name of site column
+        time_col (optional) - name of time column
+        
+        Note: pass in site_col and time_col if different from defaults
+        
+    Output:
+        Pandas dataframe with complete timestamps
+    '''
+    
+    sites = df[site_col].unique() # unique sites
+    frame = df.set_index([site_col, time_col]) # index site and time
+    
+    # Reindex
+    frame = frame.reindex(
+        pd.MultiIndex.from_product([
+            sites,
+            pd.date_range(start=t_start, end=t_end, freq='H')
+        ])
+    )
+    
+    # Reset indices back to columns
+    frame.index.rename([site_col, time_col], inplace=True)
+    return frame.reset_index()
 
 
 def deg_to_components(df, deg_col):
@@ -484,7 +480,7 @@ def deg_to_components(df, deg_col):
         deg_col - name of column with values in polar degrees
         
     Output:
-        Pandas dataframe with added columns
+        Pandas dataframe with additional columns: x and y
     '''
     
     df[f'{deg_col}_x'] = np.cos(df[deg_col] * np.pi / 180)
@@ -802,10 +798,9 @@ def hist_subplots(df, cols, bins=20, colors='bgrcmykw'):
         None
     '''
     
-    colors = 'bgrcmykw'
     for i in cols:
         fig = plt.figure(figsize=(16, 4))
-        df.iloc[:, i].plot.hist(bins=bins, color=colors[i])
+        df.iloc[:, i].plot.hist(bins=bins, color=colors[i-2])
         plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
 
 
