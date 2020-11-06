@@ -491,6 +491,146 @@ def deg_to_components(df, deg_col):
 
 
 
+####################      PLOTTING      ####################
+
+
+def hist_subplots(df, cols, bins=20, colors='bgrcmykw'):
+    
+    '''
+    Function:
+        Plot the value distribution of specified columns of a dataframe
+        
+    Input:
+        df - Pandas dataframe with numeric columns
+        cols - array-like of column indices to plot
+        bins - number of bins to use for the histograms
+        colors - iterable of colors to use for subplots
+        
+    Output:
+        None
+    '''
+    
+    for i in cols:
+        fig = plt.figure(figsize=(16, 4))
+        df.iloc[:, i].plot.hist(bins=bins, color=colors[i-2])
+        plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
+
+
+def plot_readings(df, bldg_list, start=0, end=1,
+                  resample=None, groupby=None, ticks=None,
+                  bldg_first=False, figsize=(16, 4),
+                  time_col='timestamp', bldg_col='building_id', 
+                  meter_col='meter', read_col='meter_reading'):
+    
+    '''
+    Function:
+        Plot readings from 1 or more of each type of meter
+        
+    Input:
+        df - Pandas dataframe with columns: building, meter type, and time
+        bldg_list - array-like of buildings
+        start (optional) - start index to slice buildings on
+        end (optional) - end index to slice buildings on
+        resample (optional) - resampling frequency if resampling by time
+        groupby (optional) - list of columns to group by if aggregating
+        ticks (optional) - range of xtick locations
+        bldg_first (optional) - boolean to indicate whether to iterate through
+                                buildings before meters
+        figsize (optional) - tuple with width and height of plot
+        time_col (optional) - name of time column
+        bldg_col (optional) - name of building column
+        meter_col (optional) - name of meter type column
+        read_col (optional) - name of meter reading column
+        
+        Note: pass in time_col, bldg_col, meter_col, and read_col if different 
+              from defaults
+        
+    Output:
+        None
+    '''
+    
+    # Set time as index
+    df = df.set_index(time_col)
+    types = ['electricity', 'chilledwater', 'steam', 'hotwater']
+    
+    # Plot readings from all meters of each building in the list
+    if bldg_first:
+        for b in bldg_list: # for each building
+            for m in df[df[bldg_col] == b][meter_col].unique(): # for each meter
+                fig = plt.figure(figsize=figsize)
+                bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
+                bm.resample('d').mean()[read_col].plot() # plot daily mean
+                plt.title(f'Building {b} ({types[m]} meter)')
+                plt.ylabel('meter_reading')
+                
+    # Plot readings from a number of each meter type
+    else:
+        for m in range(len(types)): # for each meter type
+            for b in bldg_list[m][start:end]: # for each building
+                fig = plt.figure(figsize=(16, 4))
+                bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
+                if resample: # if resampling time frequency
+                    bm = bm.resample(resample).mean()
+                if groupby: # if aggregating with mean
+                    bm = bm.groupby(groupby).mean()
+                bm[read_col].plot(xticks=ticks)
+                plt.title(f'Building {b} ({types[m]} meter)')
+                plt.ylabel('meter_reading')
+
+                
+def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', 
+                        pivot_vals='meter_reading', freq=None,
+                        legend_pos=(1, 1), legend_col=1, cols_to_sep=[],
+                        meter_col='meter', type_col='type'):
+    
+    '''
+    Function:
+        Pivot and plot electric meter readings by a specified feature,
+        optionally resampling by time
+        
+    Input:
+        df - Pandas dataframe with 2 meter type columns (1 is integer-encoded)
+        pivot_col - name of column to pivot to columns
+        pivot_idx (optional) - name of column to pivot to index
+        pivot_vals (optional) - name of column to aggregate for pivot table
+        freq (optional) - resampling frequency if resampling by time
+        legend_pos (optional) - tuple to indicate the legend's anchor position
+        legend_col (optional) - number of columns in legend
+        cols_to_sep (optional) - list of columns to plot separately
+        meter_col (optional) - name of meter type number column as integers
+        type_col (optional) - name of meter type column as strings
+        
+        Note: plot columns with a different scale separately for a better view
+        Note: pass in time_col, building_col, meter_col, and reading_col if 
+              different from defaults
+        
+    Output:
+        Pandas dataframe of the pivot table
+    '''
+    
+    elec = df.pivot_table(index=pivot_idx, columns=pivot_col,
+                          values=pivot_vals, aggfunc='mean')
+    if freq: # resample by time
+        elec = elec.resample(freq).mean()
+    
+    # Plot main group
+    elec.drop(cols_to_sep, axis=1).plot(figsize=(16, 5))
+    plt.title('Electric meter readings')
+    plt.ylabel('meter_reading')
+    plt.legend(bbox_to_anchor=legend_pos, ncol=legend_col, fancybox=True)
+    
+    # Plot separated columns
+    if cols_to_sep:
+        elec[cols_to_sep].plot()
+        plt.title('Electric meter readings')
+        plt.ylabel('meter_reading')
+        plt.legend(bbox_to_anchor=(1, 1), fancybox=True)
+        
+    return elec
+
+
+
+
 ####################      FEATURES      ####################
 
 
@@ -775,143 +915,4 @@ def objective(trial):
     Output:
         Root mean squared log error of the trial
     '''
-
     
-    
-    
-####################      PLOTTING      ####################
-
-
-def hist_subplots(df, cols, bins=20, colors='bgrcmykw'):
-    
-    '''
-    Function:
-        Plot the value distribution of specified columns of a dataframe
-        
-    Input:
-        df - Pandas dataframe with numeric columns
-        cols - array-like of column indices to plot
-        bins - number of bins to use for the histograms
-        colors - iterable of colors to use for subplots
-        
-    Output:
-        None
-    '''
-    
-    for i in cols:
-        fig = plt.figure(figsize=(16, 4))
-        df.iloc[:, i].plot.hist(bins=bins, color=colors[i-2])
-        plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
-
-
-def plot_readings(df, bldg_list, start=0, end=1,
-                  resample=None, groupby=None, ticks=None,
-                  bldg_first=False, figsize=(16, 4),
-                  time_col='timestamp', bldg_col='building_id', 
-                  meter_col='meter', read_col='meter_reading'):
-    
-    '''
-    Function:
-        Plot readings from 1 or more of each type of meter
-        
-    Input:
-        df - Pandas dataframe with columns: building, meter type, and time
-        bldg_list - array-like of buildings
-        start (optional) - start index to slice buildings on
-        end (optional) - end index to slice buildings on
-        resample (optional) - resampling frequency if resampling by time
-        groupby (optional) - list of columns to group by if aggregating
-        ticks (optional) - range of xtick locations
-        bldg_first (optional) - boolean to indicate whether to iterate through
-                                buildings before meters
-        figsize (optional) - tuple with width and height of plot
-        time_col (optional) - name of time column
-        bldg_col (optional) - name of building column
-        meter_col (optional) - name of meter type column
-        read_col (optional) - name of meter reading column
-        
-        Note: pass in time_col, bldg_col, meter_col, and read_col if different 
-              from defaults
-        
-    Output:
-        None
-    '''
-    
-    # Set time as index
-    df = df.set_index(time_col)
-    types = ['electricity', 'chilledwater', 'steam', 'hotwater']
-    
-    # Plot readings from all meters of each building in the list
-    if bldg_first:
-        for b in bldg_list: # for each building
-            for m in df[df[bldg_col] == b][meter_col].unique(): # for each meter
-                fig = plt.figure(figsize=figsize)
-                bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
-                bm.resample('d').mean()[read_col].plot() # plot daily mean
-                plt.title(f'Building {b} ({types[m]} meter)')
-                plt.ylabel('meter_reading')
-                
-    # Plot readings from a number of each meter type
-    else:
-        for m in range(len(types)): # for each meter type
-            for b in bldg_list[m][start:end]: # for each building
-                fig = plt.figure(figsize=(16, 4))
-                bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
-                if resample: # if resampling time frequency
-                    bm = bm.resample(resample).mean()
-                if groupby: # if aggregating with mean
-                    bm = bm.groupby(groupby).mean()
-                bm[read_col].plot(xticks=ticks)
-                plt.title(f'Building {b} ({types[m]} meter)')
-                plt.ylabel('meter_reading')
-
-                
-def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', 
-                        pivot_vals='meter_reading', freq=None,
-                        legend_pos=(1, 1), legend_col=1, cols_to_sep=[],
-                        meter_col='meter', type_col='type'):
-    
-    '''
-    Function:
-        Pivot and plot electric meter readings by a specified feature,
-        optionally resampling by time
-        
-    Input:
-        df - Pandas dataframe with 2 meter type columns (1 is integer-encoded)
-        pivot_col - name of column to pivot to columns
-        pivot_idx (optional) - name of column to pivot to index
-        pivot_vals (optional) - name of column to aggregate for pivot table
-        freq (optional) - resampling frequency if resampling by time
-        legend_pos (optional) - tuple to indicate the legend's anchor position
-        legend_col (optional) - number of columns in legend
-        cols_to_sep (optional) - list of columns to plot separately
-        meter_col (optional) - name of meter type number column as integers
-        type_col (optional) - name of meter type column as strings
-        
-        Note: plot columns with a different scale separately for a better view
-        Note: pass in time_col, building_col, meter_col, and reading_col if 
-              different from defaults
-        
-    Output:
-        Pandas dataframe of the pivot table
-    '''
-    
-    elec = df.pivot_table(index=pivot_idx, columns=pivot_col,
-                          values=pivot_vals, aggfunc='mean')
-    if freq: # resample by time
-        elec = elec.resample(freq).mean()
-    
-    # Plot main group
-    elec.drop(cols_to_sep, axis=1).plot(figsize=(16, 5))
-    plt.title('Electric meter readings')
-    plt.ylabel('meter_reading')
-    plt.legend(bbox_to_anchor=legend_pos, ncol=legend_col, fancybox=True)
-    
-    # Plot separated columns
-    if cols_to_sep:
-        elec[cols_to_sep].plot()
-        plt.title('Electric meter readings')
-        plt.ylabel('meter_reading')
-        plt.legend(bbox_to_anchor=(1, 1), fancybox=True)
-        
-    return elec
