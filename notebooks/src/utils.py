@@ -562,6 +562,7 @@ def plot_readings(df, bldg_list, start=0, end=1,
                 bm.resample('d').mean()[read_col].plot() # plot daily mean
                 plt.title(f'Building {b} ({types[m]} meter)')
                 plt.ylabel('meter_reading')
+                plt.autoscale(enable=True, axis='x', tight=True)
                 
     # Plot readings from a number of each meter type
     else:
@@ -576,6 +577,7 @@ def plot_readings(df, bldg_list, start=0, end=1,
                 bm[read_col].plot(xticks=ticks)
                 plt.title(f'Building {b} ({types[m]} meter)')
                 plt.ylabel('meter_reading')
+                plt.autoscale(enable=True, axis='x', tight=True)
 
                 
 def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', 
@@ -894,25 +896,3 @@ def inc_feat_count(count_df, feats, count_col='count'):
     for feat in feats:
         count_df.loc[feat, count_col] += 1
     return count_df
-
-
-
-
-####################      MODELING      ####################
-
-
-
-
-def objective(trial):
-    
-    '''
-    Function:
-        Objective function for LightGBM parameter tuning using Optuna
-        
-    Input:
-        Optuna's trial object
-        
-    Output:
-        Root mean squared log error of the trial
-    '''
-    
