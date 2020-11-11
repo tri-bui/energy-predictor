@@ -67,7 +67,7 @@ def reduce_mem_usage(df):
     return df
 
 
-def get_summary(df):
+def summarize(df):
     
     '''
     Function:
