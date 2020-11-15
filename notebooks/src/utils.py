@@ -1,3 +1,4 @@
+import os
 import joblib
 import holidays
 import numpy as np
@@ -16,6 +17,22 @@ import optuna
 
 
 ####################      GENERAL      ####################
+
+
+def mkdir(path):
+    
+    '''
+    Create a directory at the specified path if it doesn't exist
+    
+    Input:
+        path - directory to create
+        
+    Output:
+        None
+    '''
+    
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
 
 def reduce_mem_usage(df):
