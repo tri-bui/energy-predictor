@@ -600,7 +600,7 @@ def plot_readings(df, bldg_list, start=0, end=1,
 def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', 
                         pivot_vals='meter_reading', freq=None,
                         legend_pos=(1, 1), legend_col=1, cols_to_sep=[],
-                        meter_col='meter', type_col='type'):
+                        add_to_title='', meter_col='meter', type_col='type'):
     
     '''
     Function:
@@ -616,6 +616,7 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
         legend_pos (optional) - tuple to indicate the legend's anchor position
         legend_col (optional) - number of columns in legend
         cols_to_sep (optional) - list of columns to plot separately
+        add_to_title (optional) - text to add to title
         meter_col (optional) - name of meter type number column as integers
         type_col (optional) - name of meter type column as strings
         
@@ -634,14 +635,14 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
     
     # Plot main group
     elec.drop(cols_to_sep, axis=1).plot(figsize=(16, 5))
-    plt.title('Electric meter readings')
+    plt.title('Electric Meter Readings' + add_to_title)
     plt.ylabel('meter_reading')
     plt.legend(bbox_to_anchor=legend_pos, ncol=legend_col, fancybox=True)
     
     # Plot separated columns
     if cols_to_sep:
         elec[cols_to_sep].plot()
-        plt.title('Electric meter readings')
+        plt.title('Electric Meter Readings' + add_to_title)
         plt.ylabel('meter_reading')
         plt.legend(bbox_to_anchor=(1, 1), fancybox=True)
         
