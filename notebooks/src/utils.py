@@ -511,7 +511,7 @@ def deg_to_components(df, deg_col):
 ####################      PLOTTING      ####################
 
 
-def hist_subplots(df, cols, bins=20, colors='bgrcmykw'):
+def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), colors='bgrcmykw'):
     
     '''
     Function:
@@ -528,14 +528,14 @@ def hist_subplots(df, cols, bins=20, colors='bgrcmykw'):
     '''
     
     for i in cols:
-        fig = plt.figure(figsize=(16, 4))
+        fig = plt.figure(figsize=subplot_figsize)
         df.iloc[:, i].plot.hist(bins=bins, color=colors[i-2])
         plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
 
 
 def plot_readings(df, bldg_list, start=0, end=1,
                   resample=None, groupby=None, ticks=None,
-                  bldg_first=False, figsize=(16, 4),
+                  bldg_first=False, figsize=(15, 3),
                   time_col='timestamp', bldg_col='building_id', 
                   meter_col='meter', read_col='meter_reading'):
     
@@ -634,7 +634,7 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
         elec = elec.resample(freq).mean()
     
     # Plot main group
-    elec.drop(cols_to_sep, axis=1).plot(figsize=(16, 5))
+    elec.drop(cols_to_sep, axis=1).plot(figsize=(15, 5))
     plt.title('Electric Meter Readings' + add_to_title)
     plt.ylabel('meter_reading')
     plt.legend(bbox_to_anchor=legend_pos, ncol=legend_col, fancybox=True)
