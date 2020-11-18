@@ -4,6 +4,7 @@ import holidays
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 from feature_engine.categorical_encoders import RareLabelCategoricalEncoder, \
                                                 MeanCategoricalEncoder
@@ -585,7 +586,7 @@ def plot_readings(df, bldg_list, start=0, end=1,
     else:
         for m in range(len(types)): # for each meter type
             for b in bldg_list[m][start:end]: # for each building
-                fig = plt.figure(figsize=(16, 4))
+                fig = plt.figure(figsize=figsize)
                 bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
                 if resample: # if resampling time frequency
                     bm = bm.resample(resample).mean()
@@ -600,7 +601,8 @@ def plot_readings(df, bldg_list, start=0, end=1,
 def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', 
                         pivot_vals='meter_reading', freq=None,
                         legend_pos=(1, 1), legend_col=1, cols_to_sep=[],
-                        add_to_title='', meter_col='meter', type_col='type'):
+                        add_to_title='', figsize=(15, 5), 
+                        meter_col='meter', type_col='type'):
     
     '''
     Function:
@@ -617,6 +619,7 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
         legend_col (optional) - number of columns in legend
         cols_to_sep (optional) - list of columns to plot separately
         add_to_title (optional) - text to add to title
+        figsize (optional) - tuple to indicate the size of the figure
         meter_col (optional) - name of meter type number column as integers
         type_col (optional) - name of meter type column as strings
         
@@ -634,7 +637,7 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
         elec = elec.resample(freq).mean()
     
     # Plot main group
-    elec.drop(cols_to_sep, axis=1).plot(figsize=(15, 5))
+    elec.drop(cols_to_sep, axis=1).plot(figsize=figsize)
     plt.title('Electric Meter Readings' + add_to_title)
     plt.ylabel('meter_reading')
     plt.legend(bbox_to_anchor=legend_pos, ncol=legend_col, fancybox=True)
