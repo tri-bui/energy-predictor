@@ -3,8 +3,8 @@ import joblib
 import holidays
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-plt.style.use('ggplot')
 
 from feature_engine.categorical_encoders import RareLabelCategoricalEncoder, \
                                                 MeanCategoricalEncoder
