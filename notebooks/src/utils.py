@@ -192,6 +192,35 @@ def convert_readings(df, site_num, meter_num, convert_from, convert_to,
     return df
 
 
+def polar_to_cartesian(df, deg_col, drop_original=True):
+    
+    '''
+    Function:
+        Break the polar degree values of a column into Cartesian x and y components.
+        
+        Note: 0 degrees will be 0 for both components
+        
+    Input:
+        df - Pandas dataframe with a column in polar degrees
+        deg_col - name of column with values in polar degrees
+        drop_original (optional) - whether to drop the original column
+        
+    Output:
+        Pandas dataframe with additional columns: x and y
+    '''
+    
+    df[f'{deg_col}_x'] = np.cos(df[deg_col] * np.pi / 180) # x-component
+    df[f'{deg_col}_y'] = np.sin(df[deg_col] * np.pi / 180) # y-component
+    
+    # Update x-component to 0 if y-component is 0
+    df.loc[df[deg_col] == 0, f'{deg_col}_x'] = 0
+    
+    # Drop original column
+    if drop_original:
+        df.drop(deg_col, axis=1, inplace=True)
+    return df
+
+
 def get_rel_humidity(T, Td):
     
     '''
@@ -483,28 +512,6 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'
     # Reset indices back to columns
     frame.index.rename([site_col, time_col], inplace=True)
     return frame.reset_index()
-
-
-def deg_to_components(df, deg_col):
-    
-    '''
-    Function:
-        Break the polar degree values of a column into x and y components
-        
-        Note: 0 degrees will be 0 for both components
-        
-    Input:
-        df - Pandas dataframe with a column in polar degrees
-        deg_col - name of column with values in polar degrees
-        
-    Output:
-        Pandas dataframe with additional columns: x and y
-    '''
-    
-    df[f'{deg_col}_x'] = np.cos(df[deg_col] * np.pi / 180)
-    df[f'{deg_col}_y'] = np.sin(df[deg_col] * np.pi / 180)
-    df.loc[df[deg_col] == 0, f'{deg_col}_x'] = 0
-    return df
 
 
 
