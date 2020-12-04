@@ -196,7 +196,7 @@ def polar_to_cartesian(df, deg_col, drop_original=True):
     
     '''
     Function:
-        Break the polar degree values of a column into Cartesian x and y components.
+        Break the polar degree values of a column into Cartesian x and y components
         
         Note: 0 degrees will be 0 for both components
         
@@ -221,7 +221,7 @@ def polar_to_cartesian(df, deg_col, drop_original=True):
     return df
 
 
-def get_rel_humidity(T, Td):
+def calc_rel_humidity(T, Td):
     
     '''
     Function:
