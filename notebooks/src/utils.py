@@ -209,8 +209,8 @@ def polar_to_cartesian(df, deg_col, drop_original=True):
         Pandas dataframe with additional columns: x and y
     '''
     
-    df[f'{deg_col}_x'] = np.cos(df[deg_col] * np.pi / 180) # x-component
-    df[f'{deg_col}_y'] = np.sin(df[deg_col] * np.pi / 180) # y-component
+    df[f'{deg_col}_x'] = np.cos(df[deg_col] * np.pi / 180).astype('float32')
+    df[f'{deg_col}_y'] = np.sin(df[deg_col] * np.pi / 180).astype('float32')
     
     # Update x-component to 0 if y-component is 0
     df.loc[df[deg_col] == 0, f'{deg_col}_x'] = 0
