@@ -5,6 +5,7 @@ dist/
 *.ipynb_checkpoints/
 *cache*/
 resources/
+models/
 objects/
 data/
 data_test/

@@ -6,8 +6,7 @@ import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from feature_engine.categorical_encoders import RareLabelCategoricalEncoder, \
-                                                MeanCategoricalEncoder
+from feature_engine.categorical_encoders import RareLabelCategoricalEncoder, MeanCategoricalEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_squared_log_error
 import lightgbm as lgb
@@ -117,8 +116,7 @@ def get_outlier_threshold(df, col_name, stat='std', multiplier=3):
     Input:
         df - Pandas dataframe
         col_name - name of column to calculate threshold for
-        stat (optional) - either standard deviation (std) or
-                          interquantile range (iqr)
+        stat (optional) - either standard deviation (std) or interquantile range (iqr)
         multiplier (optional) - multiplier for the stat
     
     Output:
@@ -149,8 +147,7 @@ def get_outlier_threshold(df, col_name, stat='std', multiplier=3):
 
 
 def convert_readings(df, site_num, meter_num, convert_from, convert_to,
-                     site_col='site_id', meter_col='meter', 
-                     reading_col='meter_reading'):
+                     site_col='site_id', meter_col='meter', reading_col='meter_reading'):
     
     '''
     Function:
@@ -163,8 +160,7 @@ def convert_readings(df, site_num, meter_num, convert_from, convert_to,
               (4) ton to kbtu
         
     Input:
-        df - Pandas dataframe with the columns: site, meter type, and meter 
-             reading
+        df - Pandas dataframe with the columns: site, meter type, and meter reading
         site_num - number of site
         meter_num - meter type number
         convert_from - unit to convert from: "kbtu", "kwh", or "ton"
@@ -187,8 +183,7 @@ def convert_readings(df, site_num, meter_num, convert_from, convert_to,
     
     # Convert using multiplier
     mult = eval(convert_from + '_to_' + convert_to)
-    df.loc[(df[site_col] == site_num) & 
-           (df[meter_col] == meter_num), reading_col] *= mult
+    df.loc[(df[site_col] == site_num) & (df[meter_col] == meter_num), reading_col] *= mult
     return df
 
 
@@ -293,21 +288,18 @@ def missing_vals_by_site(df, pct=False, site_col='site_id', time_col='timestamp'
     missing = df.groupby(site_col).count()
     for col in missing.columns[1:]:
         missing[col] = missing.timestamp - missing[col]
-    missing.columns = [col if col == time_col else f'missing_{col}'
-                       for col in missing.columns]
+    missing.columns = [col if col == time_col else f'missing_{col}' for col in missing.columns]
     
     # % missing
     pct_missing = missing.copy()
     for col in pct_missing.columns[1:]:
         pct_missing[col] = round(100 * missing[col] / missing.timestamp, 2)
-    pct_missing.columns = [col if col == time_col else f'pct_{col}'
-                           for col in pct_missing.columns]
+    pct_missing.columns = [col if col == time_col else f'pct_{col}' for col in pct_missing.columns]
     
     return pct_missing if pct else missing
     
     
-def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols, 
-                 site_col='site_id'):
+def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols, site_col='site_id'):
     
     '''
     Function:
@@ -317,15 +309,13 @@ def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols,
         
     Input:
         df - Pandas dataframe with site column
-        ffill_cols - list of columns to perform a simple forward fill and
-                     backward fill on
+        ffill_cols - list of columns to perform a simple forward fill and backward fill on
         lin_interp_cols - list of columns to perform linear interpolation on
         cub_interp_cols - list of columns to perform cubic interpolation on
         site_col (optional) - name of site column
         
-        Note: cols_to_interp_lin and cols_to_interp_cubic will also be 
-              forward-filled and backward-filled (after interpolation)
-              to fill the beginning and end
+        Note: cols_to_interp_lin and cols_to_interp_cubic will also be forward-filled and 
+              backward-filled (after interpolation) to fill the beginning and end
         Note: pass in site_col if different from default
         
     Output:
@@ -336,30 +326,22 @@ def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols,
         
         if col in ffill_cols:
             df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.fillna(method='ffill') \
-                                              .fillna(method='bfill'))
+                        .transform(lambda s: s.fillna(method='ffill') .fillna(method='bfill'))
                     
         if col in lin_interp_cols:
             df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: \
-                                   s.interpolate('linear',
-                                                 limit_direction='both') \
-                                   .fillna(method='ffill') \
-                                   .fillna(method='bfill'))
+                        .transform(lambda s: s.interpolate('linear', limit_direction='both') \
+                                              .fillna(method='ffill').fillna(method='bfill'))
             
         if col in cub_interp_cols:
             df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: \
-                                   s.interpolate('cubic',
-                                                 limit_direction='both') \
-                                   .fillna(method='ffill') \
-                                   .fillna(method='bfill'))
+                        .transform(lambda s: s.interpolate('cubic', limit_direction='both') \
+                                              .fillna(method='ffill').fillna(method='bfill'))
 
     return df
 
 
-def print_missing_readings(df, bldg_col='building_id', meter_col='meter', 
-                           time_col='timestamp'):
+def print_missing_readings(df, bldg_col='building_id', meter_col='meter', time_col='timestamp'):
     
     '''
     Function:
@@ -387,13 +369,11 @@ def print_missing_readings(df, bldg_col='building_id', meter_col='meter',
     
     # Meters with missing readings
     meters_with_missing = n_readings[n_readings[time_col] != 366 * 24]
-    pct_meters_with_missing = 100 * meters_with_missing.shape[0] // \
-                              n_readings.shape[0] # percent
+    pct_meters_with_missing = 100 * meters_with_missing.shape[0] // n_readings.shape[0] # percent
     
     # Buildings with meter(s) with missing readings
     n_bldgs_with_missing = meters_with_missing[bldg_col].nunique() # number
-    pct_bldgs_with_missing = 100 * n_bldgs_with_missing // \
-                             n_readings[bldg_col].nunique() # percent
+    pct_bldgs_with_missing = 100 * n_bldgs_with_missing // n_readings[bldg_col].nunique() # percent
     
     # Total missing readings by the 4 meter types
     n_missing_by_type = meters_with_missing[meter_col].value_counts() # number
@@ -406,7 +386,7 @@ def print_missing_readings(df, bldg_col='building_id', meter_col='meter',
         print(types[i].capitalize(), 'meters:', n_meters[i])
     
     # Total missing
-    print('\nBuildings with meter(s) with missing readings:',
+    print('\nBuildings with meter(s) with missing readings:', 
           n_bldgs_with_missing, f'({pct_bldgs_with_missing}%)')
     print('Total meters with missing readings:',
           meters_with_missing.shape[0], f'({pct_meters_with_missing}%)')
@@ -424,8 +404,7 @@ def extract_dt_components(df, dt_components, time_col='timestamp'):
     
     '''
     Function:
-        Extract datetime components from a datetime column of a dataframe and
-        add them as new columns
+        Extract datetime components from a datetime column of a dataframe and add them as new columns
         
     Input:
         df - Pandas dataframe with a time column
@@ -461,8 +440,7 @@ def get_site(df, site_num, time_idx=False, site_col='site_id', time_col='timesta
     Input:
         df - Pandas dataframe with a site column and time column
         site_num - number of site to extract
-        time_idx (optional) - boolean to indicate weather to set the
-                              time as the index
+        time_idx (optional) - boolean to indicate weather to set the time as the index
         site_col (optional) - name of site column
         time_col (optional) - name of time column
         
@@ -482,8 +460,8 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'
     
     '''
     Function:
-        Reindex dataframe to include a timestamp for every hour within the time 
-        interval for every site
+        Reindex dataframe to include a timestamp for every hour within the time interval for every 
+        site
         
     Input:
         df - Pandas dataframe with columns: site and time
@@ -503,10 +481,7 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'
     
     # Reindex
     frame = frame.reindex(
-        pd.MultiIndex.from_product([
-            sites,
-            pd.date_range(start=t_start, end=t_end, freq='H')
-        ])
+        pd.MultiIndex.from_product([sites, pd.date_range(start=t_start, end=t_end, freq='H')])
     )
     
     # Reset indices back to columns
@@ -541,10 +516,8 @@ def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), colors='bgrcmykw')
         plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
 
 
-def plot_readings(df, bldg_list, start=0, end=1,
-                  resample=None, groupby=None, ticks=None,
-                  bldg_first=False, figsize=(15, 3),
-                  time_col='timestamp', bldg_col='building_id', 
+def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None, ticks=None, 
+                  bldg_first=False, figsize=(15, 3), time_col='timestamp', bldg_col='building_id', 
                   meter_col='meter', read_col='meter_reading'):
     
     '''
@@ -559,16 +532,14 @@ def plot_readings(df, bldg_list, start=0, end=1,
         resample (optional) - resampling frequency if resampling by time
         groupby (optional) - list of columns to group by if aggregating
         ticks (optional) - range of xtick locations
-        bldg_first (optional) - boolean to indicate whether to iterate through
-                                buildings before meters
+        bldg_first (optional) - boolean to indicate whether to iterate through buildings before meters
         figsize (optional) - tuple with width and height of plot
         time_col (optional) - name of time column
         bldg_col (optional) - name of building column
         meter_col (optional) - name of meter type column
         read_col (optional) - name of meter reading column
         
-        Note: pass in time_col, bldg_col, meter_col, and read_col if different 
-              from defaults
+        Note: pass in time_col, bldg_col, meter_col, and read_col if different from defaults
         
     Output:
         None
@@ -605,16 +576,13 @@ def plot_readings(df, bldg_list, start=0, end=1,
                 plt.autoscale(enable=True, axis='x', tight=True)
 
                 
-def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', 
-                        pivot_vals='meter_reading', freq=None,
-                        legend_pos=(1, 1), legend_col=1, cols_to_sep=[],
-                        add_to_title='', figsize=(15, 5), 
-                        meter_col='meter', type_col='type'):
+def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', pivot_vals='meter_reading', freq=None,
+                        legend_pos=(1, 1), legend_col=1, cols_to_sep=[], add_to_title='', 
+                        figsize=(15, 5), meter_col='meter', type_col='type'):
     
     '''
     Function:
-        Pivot and plot electric meter readings by a specified feature,
-        optionally resampling by time
+        Pivot and plot electric meter readings by a specified feature, optionally resampling by time
         
     Input:
         df - Pandas dataframe with 2 meter type columns (1 is integer-encoded)
@@ -631,15 +599,13 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
         type_col (optional) - name of meter type column as strings
         
         Note: plot columns with a different scale separately for a better view
-        Note: pass in time_col, building_col, meter_col, and reading_col if 
-              different from defaults
+        Note: pass in time_col, building_col, meter_col, and reading_col if different from defaults
         
     Output:
         Pandas dataframe of the pivot table
     '''
     
-    elec = df.pivot_table(index=pivot_idx, columns=pivot_col,
-                          values=pivot_vals, aggfunc='mean')
+    elec = df.pivot_table(index=pivot_idx, columns=pivot_col, values=pivot_vals, aggfunc='mean')
     if freq: # resample by time
         elec = elec.resample(freq).mean()
     
@@ -664,16 +630,12 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
 ####################      FEATURES      ####################
 
 
-
-
 def rare_encoder(train, test, var, val=0, tol=0.05, 
-                 path='../objects/transformers/rare_enc/',
-                 name='rare_enc.pkl'):
+                 path='../models/transformers/rare_enc/', name='rare_enc.pkl'):
     
     '''
     Function:
-        Apply feature_engine's RareLabelCategoricalEncoder to both a train and
-        test set
+        Apply feature_engine's RareLabelCategoricalEncoder to both a train and test set
     
     Input:
         train - train data
@@ -701,7 +663,8 @@ def rare_encoder(train, test, var, val=0, tol=0.05,
 
 
 
-def mean_encoder(X_train, y_train, X_test, var, X_val=0, path='../objects/transformers/mean_enc/', name='mean_enc.pkl'):
+def mean_encoder(X_train, y_train, X_test, var, X_val=0, 
+                 path='../objects/transformers/mean_enc/', name='mean_enc.pkl'):
     
     '''
     Function:
@@ -732,8 +695,7 @@ def mean_encoder(X_train, y_train, X_test, var, X_val=0, path='../objects/transf
     
     
     
-def scale_feats(train, test, val=0, path='../objects/transformers/scaler/', 
-                name='scaler.pkl'):
+def scale_feats(train, test, val=0, path='../objects/transformers/scaler/', name='scaler.pkl'):
 
     '''
     Function:
