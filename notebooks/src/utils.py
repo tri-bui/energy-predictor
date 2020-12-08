@@ -326,7 +326,7 @@ def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols, site_col='sit
         
         if col in ffill_cols:
             df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.fillna(method='ffill') .fillna(method='bfill'))
+                        .transform(lambda s: s.fillna(method='ffill').fillna(method='bfill'))
                     
         if col in lin_interp_cols:
             df[col] = df.groupby(site_col)[col] \
@@ -627,7 +627,30 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', pivot_vals='meter_
 
 
 
-####################      FEATURES      ####################
+####################      FEATURES      ####################    
+    
+    
+def plot_rare_cats(df, col):
+    
+    '''
+    Function:
+        Plot the value counts of each category of a feature
+        
+    Input:
+        df - Pandas dataframe with a categorical column
+        col - name of categorical column
+        
+    Output:
+        Pandas series of value counts
+    '''
+
+    counts = df[col].value_counts()
+    
+    counts.plot.bar()
+    plt.axhline(y=df.shape[0] * 0.05, color='red') # rare threshold at 5%
+    plt.xticks(rotation=45, ha='right')
+    
+    return counts
 
 
 def rare_encoder(train, test, var, val=0, tol=0.05, 
@@ -725,30 +748,7 @@ def scale_feats(train, test, val=0, path='../objects/transformers/scaler/', name
         val_df = pd.DataFrame(val_scaled, columns=val.columns)
     return train_df, val_df, test_df
     
-    
-    
-    
-def find_rare_cats(df, col):
-    
-    '''
-    Function:
-        Plot the value counts of each category of a feature
-        
-    Input:
-        df - Pandas dataframe with a categorical column
-        col - name of categorical column
-        
-    Output:
-        Pandas series of value counts
-    '''
 
-    counts = df[col].value_counts()
-    
-    counts.plot.bar()
-    plt.axhline(y=df.shape[0] * 0.05, color='red')
-    plt.xticks(rotation=45, ha='right')
-    
-    return counts
 
 
 
