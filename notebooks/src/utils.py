@@ -630,7 +630,7 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', pivot_vals='meter_
 ####################      FEATURES      ####################    
     
     
-def plot_rare_cats(df, col):
+def plot_rare_cats(df, col, tol=0.05):
     
     '''
     Function:
@@ -639,6 +639,7 @@ def plot_rare_cats(df, col):
     Input:
         df - Pandas dataframe with a categorical column
         col - name of categorical column
+        tol (optional) - frequency threshold to categorize as a rare label
         
     Output:
         Pandas series of value counts
@@ -647,13 +648,78 @@ def plot_rare_cats(df, col):
     counts = df[col].value_counts()
     
     counts.plot.bar()
-    plt.axhline(y=df.shape[0] * 0.05, color='red') # rare threshold at 5%
+    plt.axhline(y=df.shape[0] * tol, color='red')
     plt.xticks(rotation=45, ha='right')
     
     return counts
 
 
-def rare_encoder(train, test, var, val=0, tol=0.05, 
+def constant_feats(df):
+    
+    '''
+    Function:
+        Check a Pandas dataframe for constant and quasi-constant features
+        
+    Input:
+        df - Pandas dataframe
+        
+    Output:
+        Pandas dataframe showing the variance of each variable and wether
+        they're a constant/quasi-constant feature
+    '''
+    
+    const = pd.DataFrame(df.var(), columns=['variance'])
+    const['constant'] = const.variance == 0
+    const['quasiconstant'] = const.variance < 0.01
+    return const.T
+    
+    
+def duplicated_feats(df):
+    
+    '''
+    Function:
+        Check a Pandas dataframe for duplicated features
+        
+    Input:
+        df - Pandas dataframe
+        
+    Output:
+        A list of pairs of duplicated features (in tuples)
+    '''
+    
+    dup = []
+    for i, col1 in enumerate(df.columns[:-1]):
+        for col2 in df.columns[i+1:]:
+            if df[col1].equals(df[col2]):
+                dup.append((col1, col2))
+    return dup
+
+
+def correlated_feats(corr_df, threshold):
+    
+    '''
+    Function:
+        Check a Pandas dataframe for correlated features
+        
+    Input:
+        corr_df - Pandas dataframe with correlation coefficients
+        threshold - coefficient threshold to consider high corrrelation
+        
+    Output:
+        A list of tuples containing the correlated features and their
+        correlation coefficient
+    '''
+
+    pairs = []
+    for i, feat1 in enumerate(corr_df.columns[:-1]):
+        for feat2 in corr_df.columns[i+1:]:
+            coef = corr_df.loc[feat1, feat2]
+            if abs(coef) >= threshold:
+                pairs.append((feat1, feat2, coef))
+    return pairs
+
+
+def rare_encoder(train, test, var, val=None, tol=0.05, 
                  path='../models/transformers/rare_enc/', name='rare_enc.pkl'):
     
     '''
@@ -670,7 +736,8 @@ def rare_encoder(train, test, var, val=0, tol=0.05,
         name (optional) - output file name
     
     Output:
-        Transformed train set, transformed test set, dictionary of encoded values
+        Transformed train set, transformed validation set, transformed test set, 
+        dictionary of encoded values
     '''
     
     enc = RareLabelCategoricalEncoder(tol=tol, variables=var)
@@ -678,15 +745,12 @@ def rare_encoder(train, test, var, val=0, tol=0.05,
     joblib.dump(enc, path + name)
     train = enc.transform(train)
     test = enc.transform(test)
-    if type(val) != int:
+    if val is not None:
         val = enc.transform(val)
     return train, val, test, enc.encoder_dict_
 
 
-
-
-
-def mean_encoder(X_train, y_train, X_test, var, X_val=0, 
+def mean_encoder(X_train, y_train, X_test, var, X_val=None, 
                  path='../objects/transformers/mean_enc/', name='mean_enc.pkl'):
     
     '''
@@ -703,7 +767,8 @@ def mean_encoder(X_train, y_train, X_test, var, X_val=0,
         name (optional) - output file name
     
     Output:
-        Transformed train set, transformed test set, dictionary of encoded values
+        Transformed train set, transformed validation set, transformed test set, 
+        dictionary of encoded values
     '''
     
     enc = MeanCategoricalEncoder(variables=var)
@@ -772,76 +837,6 @@ def encode_cat(encoder, df, col_to_encode):
     encoded = pd.DataFrame(encoded, columns=encoder.categories_)
     return encoded.astype('uint8')
     
-
-
-
-def constant_feats(df):
-    
-    '''
-    Function:
-        Check a Pandas dataframe for constant and quasi-constant features
-        
-    Input:
-        df - Pandas dataframe
-        
-    Output:
-        Pandas dataframe showing the variance of each variable and wether
-        they're a constant/quasi-constant feature
-    '''
-    
-    const = pd.DataFrame(df.var(), columns=['variance'])
-    const['constant'] = const.variance == 0
-    const['quasiconstant'] = const.variance < 0.01
-    return const
-    
-    
-    
-    
-def duplicated_feats(df):
-    
-    '''
-    Function:
-        Check a Pandas dataframe for duplicated features
-        
-    Input:
-        df - Pandas dataframe
-        
-    Output:
-        A list of pairs of duplicated features (in tuples)
-    '''
-    
-    dup = []
-    for i, col1 in enumerate(df.columns[:-1]):
-        for col2 in df.columns[i+1:]:
-            if df[col1].equals(df[col2]):
-                dup.append((col1, col2))
-    return dup
-
-
-
-
-def correlated_feats(df, threshold):
-    
-    '''
-    Function:
-        Check a Pandas dataframe for correlated features
-        
-    Input:
-        df - Pandas dataframe with correlation coefficients
-        
-    Output:
-        A list of tuples containing the correlated features and their
-        correlation coefficient
-    '''
-
-    pairs = []
-    for i, feat1 in enumerate(df.columns[:-1]):
-        for feat2 in df.columns[i+1:]:
-            coef = df.loc[feat1, feat2]
-            if coef >= threshold:
-                pairs.append((feat1, feat2, coef))
-    return pairs
-
 
 
 
