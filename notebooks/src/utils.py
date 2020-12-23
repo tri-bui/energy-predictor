@@ -755,8 +755,7 @@ def feats_from_model(X, y, seln_model, ml_model):
         List of selected features
     '''
     
-    sel = seln_model(ml_model)
-    sel.fit(X, y)
+    sel = seln_model(ml_model).fit(X, y)
     return X.columns[sel.get_support()].tolist()
 
 
@@ -781,9 +780,8 @@ def rare_encoder(train, test, var, val=None, tol=0.05,
         dictionary of encoded values
     '''
     
-    enc = RareLabelCategoricalEncoder(tol=tol, variables=var)
-    enc.fit(train)
-    joblib.dump(enc, path + name)
+    enc = RareLabelCategoricalEncoder(tol=tol, variables=var).fit(train)
+    joblib.dump(enc, path + name) # save encoder
     train = enc.transform(train)
     test = enc.transform(test)
     if val is not None:
@@ -812,19 +810,37 @@ def mean_encoder(X_train, y_train, X_test, var, X_val=None,
         dictionary of encoded values
     '''
     
-    enc = MeanCategoricalEncoder(variables=var)
-    enc.fit(X_train, y_train)
-    joblib.dump(enc, path + name)
+    enc = MeanCategoricalEncoder(variables=var).fit(X_train, y_train)
+    joblib.dump(enc, path + name) # save encoder
     X_train = enc.transform(X_train)
     X_test = enc.transform(X_test)
-    if type(X_val) != int:
+    if val is not None:
         X_val = enc.transform(X_val)
     return X_train, X_val, X_test, enc.encoder_dict_
 
+
+def encode_cat(encoder, df, col_to_encode):
     
+    '''
+    Function:
+        Numerically encoded a categorical column of a Pandas dataframe
+        
+    Input:
+        encoder - an encoder transformer from Sklearn with dense output
+        df - Pandas dataframe with a categorical column
+        col_to_encode - name of categorical column
+        
+    Output:
+        Pandas dataframe of encoded categories
+    '''
     
+    encoded = encoder.fit_transform(df[[col_to_encode]])
+    encoded = pd.DataFrame(encoded, columns=encoder.categories_)
+    return encoded.astype('uint8')
+
     
-def scale_feats(train, test, val=0, path='../objects/transformers/scaler/', name='scaler.pkl'):
+def scale_feats(train, test, val=None, 
+                path='../objects/transformers/scaler/', name='scaler.pkl'):
 
     '''
     Function:
@@ -841,39 +857,10 @@ def scale_feats(train, test, val=0, path='../objects/transformers/scaler/', name
         Transformed train set, transformed test set
     '''
     
-    scaler = StandardScaler()
-    scaler.fit(train)
-    joblib.dump(scaler, path + name)
-    train_scaled = scaler.transform(train)
-    train_df = pd.DataFrame(train_scaled, columns=train.columns)
-    test_scaled = scaler.transform(test)
-    test_df = pd.DataFrame(test_scaled, columns=test.columns)
-    val_df = 0
-    if type(val) != int:
-        val_scaled = scaler.transform(val)
-        val_df = pd.DataFrame(val_scaled, columns=val.columns)
-    return train_df, val_df, test_df
-    
-
-
-
-
-
-def encode_cat(encoder, df, col_to_encode):
-    
-    '''
-    Function:
-        Numerically encoded a categorical column of a Pandas dataframe
-        
-    Input:
-        encoder - an encoder class from Sklearn with dense output
-        df - Pandas dataframe with a categorical column
-        col_to_encode - name of categorical column
-        
-    Output:
-        Pandas dataframe of encoded categories
-    '''
-    
-    encoded = encoder.fit_transform(df[[col_to_encode]])
-    encoded = pd.DataFrame(encoded, columns=encoder.categories_)
-    return encoded.astype('uint8')
+    scaler = StandardScaler().fit(train)
+    joblib.dump(scaler, path + name) # save scaler
+    train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns)
+    test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns)
+    if val is not None:
+        val_scaled = pd.DataFrame(scaler.transform(val), columns=val.columns)
+    return train_scaled, val_scaled, test_scaled
