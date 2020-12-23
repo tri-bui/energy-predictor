@@ -739,7 +739,7 @@ def inc_feat_count(count_df, feats, count_col='count'):
     return count_df
 
 
-def feats_from_model(X, y, seln_model, ml_model):
+def feats_from_model(X, y, sel_model, ml_model):
     
     '''
     Function:
@@ -748,8 +748,8 @@ def feats_from_model(X, y, seln_model, ml_model):
     Input:
         X - data
         y - target
-        seln_model - name of scikit-learn feature selection estimator
-        ml_model - scikit-learn machine learning estimator
+        sel_model - name of scikit-learn feature selection transformer
+        ml_model - scikit-learn estimator
         
     Output:
         List of selected features
