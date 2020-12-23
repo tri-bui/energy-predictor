@@ -719,6 +719,47 @@ def correlated_feats(corr_df, threshold):
     return pairs
 
 
+def inc_feat_count(count_df, feats, count_col='count'):
+    
+    '''
+    Function:
+        Increment the count for selected features
+        
+    Input:
+        count_df - Pandas dataframe keeping count of selected features
+        feats - list of selected features
+        count_col (optional) - name of count column
+        
+    Output:
+        Pandas dataframe with updated counts
+    '''
+    
+    for feat in feats:
+        count_df.loc[feat, count_col] += 1
+    return count_df
+
+
+def feats_from_model(X, y, seln_model, ml_model):
+    
+    '''
+    Function:
+        Select features using a machine learning model
+        
+    Input:
+        X - data
+        y - target
+        seln_model - name of scikit-learn feature selection estimator
+        ml_model - scikit-learn machine learning estimator
+        
+    Output:
+        List of selected features
+    '''
+    
+    sel = seln_model(ml_model)
+    sel.fit(X, y)
+    return X.columns[sel.get_support()].tolist()
+
+
 def rare_encoder(train, test, var, val=None, tol=0.05, 
                  path='../models/transformers/rare_enc/', name='rare_enc.pkl'):
     
@@ -836,48 +877,3 @@ def encode_cat(encoder, df, col_to_encode):
     encoded = encoder.fit_transform(df[[col_to_encode]])
     encoded = pd.DataFrame(encoded, columns=encoder.categories_)
     return encoded.astype('uint8')
-    
-
-
-
-def feats_from_model(X, y, seln_model, ml_model):
-    
-    '''
-    Function:
-        Select features using a machine learning model
-        
-    Input:
-        X - data
-        y - target
-        seln_model - name of scikit-learn model class
-        ml_model - scikit-learn model class
-        
-    Output:
-        List of selected features
-    '''
-    
-    sel = seln_model(ml_model)
-    sel.fit(X, y)
-    return X.columns[sel.get_support()].tolist()
-
-
-
-
-def inc_feat_count(count_df, feats, count_col='count'):
-    
-    '''
-    Function:
-        Increment the count for selected features
-        
-    Input:
-        count_df - pandas dataframe keeping count for selected features
-        feats - list of selected features
-        count_col (optional) - name of count column
-        
-    Output:
-        Pandas dataframe with updated counts
-    '''
-    
-    for feat in feats:
-        count_df.loc[feat, count_col] += 1
-    return count_df
