@@ -755,7 +755,7 @@ def feats_from_model(X, y, sel_model, ml_model):
         List of selected features
     '''
     
-    sel = seln_model(ml_model).fit(X, y)
+    sel = sel_model(ml_model).fit(X, y)
     return X.columns[sel.get_support()].tolist()
 
 
