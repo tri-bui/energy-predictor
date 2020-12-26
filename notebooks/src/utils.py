@@ -760,7 +760,7 @@ def feats_from_model(X, y, sel_model, ml_model):
 
 
 def rare_encoder(var_list, train, test, val=None, tol=0.05, 
-                 path='../models/transformers/rare_enc/', name='rare_enc.pkl'):
+                 path='../models/transformers/rare_enc/', name='rare_enc', suffix=''):
     
     '''
     Function:
@@ -774,6 +774,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
         val (optional) - validation data
         path (optional) - output directory path
         name (optional) - output file name
+        suffix (optional) - suffix to add to file name before file extension
     
     Output:
         Transformed train set, transformed validation set, transformed test set, 
@@ -781,7 +782,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
     '''
     
     enc = RareLabelCategoricalEncoder(tol=tol, variables=var_list).fit(train)
-    joblib.dump(enc, path + name) # save encoder
+    joblib.dump(enc, path + name + suffix + '.pkl') # save encoder
     train = enc.transform(train)
     test = enc.transform(test)
     if val is not None:
@@ -790,7 +791,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
 
 
 def mean_encoder(var_list, X_train, y_train, X_test, X_val=None, 
-                 path='../models/transformers/mean_enc/', name='mean_enc.pkl'):
+                 path='../models/transformers/mean_enc/', name='mean_enc', suffix=''):
     
     '''
     Function:
@@ -804,6 +805,7 @@ def mean_encoder(var_list, X_train, y_train, X_test, X_val=None,
         X_val (optional) - validation data
         path (optional) - output directory path
         name (optional) - output file name
+        suffix (optional) - suffix to add to file name before file extension
     
     Output:
         Transformed train set, transformed validation set, transformed test set, 
@@ -811,12 +813,40 @@ def mean_encoder(var_list, X_train, y_train, X_test, X_val=None,
     '''
     
     enc = MeanCategoricalEncoder(variables=var_list).fit(X_train, y_train)
-    joblib.dump(enc, path + name) # save encoder
+    joblib.dump(enc, path + name + suffix + '.pkl') # save encoder
     X_train = enc.transform(X_train)
     X_test = enc.transform(X_test)
     if X_val is not None:
         X_val = enc.transform(X_val)
     return X_train, X_val, X_test, enc.encoder_dict_
+
+    
+def scale_feats(train, test, val=None, 
+                path='../models/transformers/scaler/', name='scaler', suffix=''):
+
+    '''
+    Function:
+        Apply scikit-learn's StandardScaler to both a train and test set
+    
+    Input:
+        train - train data
+        test - test data
+        val (optional) - validation data
+        path (optional) - output directory path
+        name (optional) - output file name
+        suffix (optional) - suffix to add to file name before file extension
+    
+    Output:
+        Transformed train set, transformed test set
+    '''
+    
+    scaler = StandardScaler().fit(train)
+    joblib.dump(scaler, path + name + suffix + '.pkl') # save scaler
+    train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns)
+    test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns)
+    if val is not None:
+        val_scaled = pd.DataFrame(scaler.transform(val), columns=val.columns)
+    return train_scaled, val_scaled, test_scaled
 
 
 def encode_cat(encoder, df, col_to_encode):
@@ -837,30 +867,3 @@ def encode_cat(encoder, df, col_to_encode):
     encoded = encoder.fit_transform(df[[col_to_encode]])
     encoded = pd.DataFrame(encoded, columns=encoder.categories_)
     return encoded.astype('uint8')
-
-    
-def scale_feats(train, test, val=None, 
-                path='../objects/transformers/scaler/', name='scaler.pkl'):
-
-    '''
-    Function:
-        Apply scikit-learn's StandardScaler to both a train and test set
-    
-    Input:
-        train - train data
-        test - test data
-        val (optional) - validation data
-        path (optional) - output directory path
-        name (optional) - output file name
-    
-    Output:
-        Transformed train set, transformed test set
-    '''
-    
-    scaler = StandardScaler().fit(train)
-    joblib.dump(scaler, path + name) # save scaler
-    train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns)
-    test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns)
-    if val is not None:
-        val_scaled = pd.DataFrame(scaler.transform(val), columns=val.columns)
-    return train_scaled, val_scaled, test_scaled
