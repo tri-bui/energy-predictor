@@ -759,7 +759,7 @@ def feats_from_model(X, y, sel_model, ml_model):
     return X.columns[sel.get_support()].tolist()
 
 
-def rare_encoder(train, test, var, val=None, tol=0.05, 
+def rare_encoder(var_list, train, test, val=None, tol=0.05, 
                  path='../models/transformers/rare_enc/', name='rare_enc.pkl'):
     
     '''
@@ -767,9 +767,9 @@ def rare_encoder(train, test, var, val=None, tol=0.05,
         Apply feature_engine's RareLabelCategoricalEncoder to both a train and test set
     
     Input:
+        var_list - list of features to encode (must be object type)
         train - train data
         test - test data
-        var - list of features to encode (must be object type)
         tol (optional) - frequency threshold to categorize as a rare label
         val (optional) - validation data
         path (optional) - output directory path
@@ -780,7 +780,7 @@ def rare_encoder(train, test, var, val=None, tol=0.05,
         dictionary of encoded values
     '''
     
-    enc = RareLabelCategoricalEncoder(tol=tol, variables=var).fit(train)
+    enc = RareLabelCategoricalEncoder(tol=tol, variables=var_list).fit(train)
     joblib.dump(enc, path + name) # save encoder
     train = enc.transform(train)
     test = enc.transform(test)
@@ -789,18 +789,18 @@ def rare_encoder(train, test, var, val=None, tol=0.05,
     return train, val, test, enc.encoder_dict_
 
 
-def mean_encoder(X_train, y_train, X_test, var, X_val=None, 
-                 path='../objects/transformers/mean_enc/', name='mean_enc.pkl'):
+def mean_encoder(var_list, X_train, y_train, X_test, X_val=None, 
+                 path='../models/transformers/mean_enc/', name='mean_enc.pkl'):
     
     '''
     Function:
         Apply feature_engine's MeanCategoricalEncoder to both a train and test set
     
     Input:
+        var_list - list of features to encode (must be object type)
         X_train - train data
         y_train - train label
         X_test - test data
-        var - list of features to encode (must be object type)
         X_val (optional) - validation data
         path (optional) - output directory path
         name (optional) - output file name
@@ -810,11 +810,11 @@ def mean_encoder(X_train, y_train, X_test, var, X_val=None,
         dictionary of encoded values
     '''
     
-    enc = MeanCategoricalEncoder(variables=var).fit(X_train, y_train)
+    enc = MeanCategoricalEncoder(variables=var_list).fit(X_train, y_train)
     joblib.dump(enc, path + name) # save encoder
     X_train = enc.transform(X_train)
     X_test = enc.transform(X_test)
-    if val is not None:
+    if X_val is not None:
         X_val = enc.transform(X_val)
     return X_train, X_val, X_test, enc.encoder_dict_
 
