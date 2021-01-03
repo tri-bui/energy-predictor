@@ -31,8 +31,11 @@ def mkdir(path):
         None
     '''
     
-    if not os.path.isdir(path):
-        os.mkdir(path)
+    p = ''
+    for d in path.split('/'):
+        p += d + '/'
+        if not os.path.isdir(p):
+            os.mkdir(p)
 
 
 def reduce_mem_usage(df):
