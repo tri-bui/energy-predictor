@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from feature_engine.categorical_encoders import RareLabelCategoricalEncoder, MeanCategoricalEncoder
+from feature_engine.encoding import RareLabelEncoder, MeanEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_squared_log_error
 import lightgbm as lgb
@@ -767,7 +767,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
     
     '''
     Function:
-        Apply feature_engine's RareLabelCategoricalEncoder to both a train and test set
+        Apply feature_engine's RareLabelEncoder to both a train and test set
     
     Input:
         var_list - list of features to encode (must be object type)
@@ -784,7 +784,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
         dictionary of encoded values
     '''
     
-    enc = RareLabelCategoricalEncoder(tol=tol, variables=var_list).fit(train)
+    enc = RareLabelEncoder(tol=tol, variables=var_list).fit(train)
     joblib.dump(enc, path + name + suffix + '.pkl') # save encoder
     train = enc.transform(train)
     test = enc.transform(test)
@@ -798,7 +798,7 @@ def mean_encoder(var_list, X_train, y_train, X_test, X_val=None,
     
     '''
     Function:
-        Apply feature_engine's MeanCategoricalEncoder to both a train and test set
+        Apply feature_engine's MeanEncoder to both a train and test set
     
     Input:
         var_list - list of features to encode (must be object type)
@@ -815,7 +815,7 @@ def mean_encoder(var_list, X_train, y_train, X_test, X_val=None,
         dictionary of encoded values
     '''
     
-    enc = MeanCategoricalEncoder(variables=var_list).fit(X_train, y_train)
+    enc = MeanEncoder(variables=var_list).fit(X_train, y_train)
     joblib.dump(enc, path + name + suffix + '.pkl') # save encoder
     X_train = enc.transform(X_train)
     X_test = enc.transform(X_test)
