@@ -19,25 +19,6 @@ import optuna
 ####################      GENERAL      ####################
 
 
-def mkdir(path):
-    
-    '''
-    Create a directory at the specified path if it doesn't exist
-    
-    Input:
-        path - directory to create
-        
-    Output:
-        None
-    '''
-    
-    p = ''
-    for d in path.split('/'):
-        p += d + '/'
-        if not os.path.isdir(p):
-            os.mkdir(p)
-
-
 def reduce_mem_usage(df):
     
     '''
