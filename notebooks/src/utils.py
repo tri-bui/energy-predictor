@@ -325,7 +325,7 @@ def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols, site_col='sit
     return df
 
 
-def print_missing_readings(df, bldg_col='building_id', meter_col='meter', time_col='timestamp'):
+def missing_readings_summary(df, bldg_col='building_id', meter_col='meter', time_col='timestamp'):
     
     '''
     Function:
