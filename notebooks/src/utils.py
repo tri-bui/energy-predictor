@@ -541,7 +541,7 @@ def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None, ti
                 bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
                 bm.resample('d').mean()[read_col].plot() # plot daily mean
                 plt.title(f'Building {b} ({types[m]} meter)')
-                plt.ylabel('meter_reading')
+                plt.ylabel('Meter reading')
                 plt.autoscale(enable=True, axis='x', tight=True)
                 
     # Plot readings from a number of each meter type
@@ -556,7 +556,7 @@ def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None, ti
                     bm = bm.groupby(groupby).mean()
                 bm[read_col].plot(xticks=ticks)
                 plt.title(f'Building {b} ({types[m]} meter)')
-                plt.ylabel('meter_reading')
+                plt.ylabel('Meter reading')
                 plt.autoscale(enable=True, axis='x', tight=True)
 
                 
@@ -596,14 +596,14 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', pivot_vals='meter_
     # Plot main group
     elec.drop(cols_to_sep, axis=1).plot(figsize=figsize)
     plt.title('Electric Meter Readings' + add_to_title)
-    plt.ylabel('meter_reading')
+    plt.ylabel('Meter reading')
     plt.legend(bbox_to_anchor=legend_pos, ncol=legend_col, fancybox=True)
     
     # Plot separated columns
     if cols_to_sep:
         elec[cols_to_sep].plot()
         plt.title('Electric Meter Readings' + add_to_title)
-        plt.ylabel('meter_reading')
+        plt.ylabel('Meter reading')
         plt.legend(bbox_to_anchor=(1, 1), fancybox=True)
         
     return elec
