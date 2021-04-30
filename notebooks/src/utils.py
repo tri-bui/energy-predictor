@@ -478,7 +478,7 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'
 ####################      PLOTTING      ####################
 
 
-def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), colors='bgrcmykw'):
+def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3)):
     
     '''
     Function:
@@ -488,7 +488,6 @@ def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), colors='bgrcmykw')
         df - Pandas dataframe with numeric columns
         cols - array-like of column indices to plot
         bins - number of bins to use for the histograms
-        colors - iterable of colors to use for subplots
         
     Output:
         None
@@ -496,7 +495,7 @@ def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), colors='bgrcmykw')
     
     for i in cols:
         fig = plt.figure(figsize=subplot_figsize)
-        df.iloc[:, i].plot.hist(bins=bins, color=colors[i-2])
+        df.iloc[:, i].plot.hist(bins=bins)
         plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
 
 
