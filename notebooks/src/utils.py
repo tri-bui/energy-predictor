@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from feature_engine.encoding import RareLabelEncoder, MeanEncoder
 from sklearn.preprocessing import StandardScaler
@@ -478,7 +479,8 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'
 ####################      PLOTTING      ####################
 
 
-def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), colors='bgrcmykw'):
+def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), 
+                  colors=sns.color_palette(n_colors=8)):
     
     '''
     Function:
