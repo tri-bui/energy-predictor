@@ -18,16 +18,20 @@ from sklearn.preprocessing import StandardScaler
 
 def reduce_mem_usage(df):
     
-    '''
-    Function:
-        Recast column data types to reduce memory usage
+    """
+    Recast the data types of numeric columns in a dataframe to reduce memory 
+    usage
         
-    Input:
-        df - Pandas dataframe
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data to reduce
         
-    Output:
-        Pandas dataframe with reduced size
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Data with reduced memory usage
+    """
     
     # Unsigned integer upper limit
     uint8_lim = 2 ** 8
@@ -40,27 +44,29 @@ def reduce_mem_usage(df):
     int32_lim = 2 ** 31
 
     for col in df.columns:
+        
         # Floats
         if df[col].dtype == 'float64':
             df[col] = df[col].astype('float32')
             
-        # Unsigned integers
-        elif str(df[col].dtype) in 'uint64' and df[col].min() >= 0:
-            if df[col].max() < uint8_lim:
-                df[col] = df[col].astype('uint8')
-            elif df[col].max() < uint16_lim:
-                df[col] = df[col].astype('uint16')
-            elif df[col].max() < uint32_lim:
-                df[col] = df[col].astype('uint32')
+        # Integers
+        elif 'int' in str(df[col].dtype):
+            
+            if df[col].min() >= 0: # unsigned
+                if df[col].max() < uint8_lim:
+                    df[col] = df[col].astype('uint8')
+                elif df[col].max() < uint16_lim:
+                    df[col] = df[col].astype('uint16')
+                elif df[col].max() < uint32_lim:
+                    df[col] = df[col].astype('uint32')
                 
-        # Signed Integers
-        elif str(df[col].dtype) == 'int64':
-            if df[col].min() >= -int8_lim and df[col].max() < int8_lim:
-                df[col] = df[col].astype('int8')
-            elif df[col].min() >= -int16_lim and df[col].max() < int16_lim:
-                df[col] = df[col].astype('int16')
-            elif df[col].min() >= -int32_lim and df[col].max() < int32_lim:
-                df[col] = df[col].astype('int32')
+            else: # signed
+                if df[col].min() >= -int8_lim and df[col].max() < int8_lim:
+                    df[col] = df[col].astype('int8')
+                elif df[col].min() >= -int16_lim and df[col].max() < int16_lim:
+                    df[col] = df[col].astype('int16')
+                elif df[col].min() >= -int32_lim and df[col].max() < int32_lim:
+                    df[col] = df[col].astype('int32')
                 
     return df
 
