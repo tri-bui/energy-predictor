@@ -13,7 +13,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 
-####################      GENERAL      ####################
+####################      UTILITY      ####################
 
 
 def reduce_mem_usage(df):
@@ -44,14 +44,10 @@ def reduce_mem_usage(df):
     int32_lim = 2 ** 31
 
     for col in df.columns:
-        
-        # Floats
-        if df[col].dtype == 'float64':
+        if df[col].dtype == 'float64': # floats
             df[col] = df[col].astype('float32')
             
-        # Integers
-        elif 'int' in str(df[col].dtype):
-            
+        elif 'int' in str(df[col].dtype): # ints
             if df[col].min() >= 0: # unsigned
                 if df[col].max() < uint8_lim:
                     df[col] = df[col].astype('uint8')
@@ -59,7 +55,6 @@ def reduce_mem_usage(df):
                     df[col] = df[col].astype('uint16')
                 elif df[col].max() < uint32_lim:
                     df[col] = df[col].astype('uint32')
-                
             else: # signed
                 if df[col].min() >= -int8_lim and df[col].max() < int8_lim:
                     df[col] = df[col].astype('int8')
@@ -73,16 +68,20 @@ def reduce_mem_usage(df):
 
 def summarize(df):
     
-    '''
-    Function:
-        Build a table of summary statistics
+    """
+    Build a custom table of summary statistics for a dataframe. The result is 
+    similar to that of the dataframe's .describe() method.
         
-    Input:
-        df - Pandas dataframe
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data to summarize
         
-    Output:
-        Pandas dataframe similar to the Pandas.DataFrame.describe() method
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Table of summary statistics
+    """
     
     stats = pd.DataFrame(df.count(), columns=['_count'])
     stats['_missing'] = df.shape[0] - stats._count
@@ -94,38 +93,42 @@ def summarize(df):
     return stats.T.fillna('-')
 
 
-def get_outlier_threshold(df, col_name, stat='std', multiplier=3):
+def get_outlier_threshold(df, var_name, use_iqr=True, multiplier=1.5):
     
-    '''
-    Function:
-        Calculate the thresholds at which to consider observations an outlier
+    """
+    Calculate the lower and upper thresholds, for a variable in the data, at 
+    which to consider observations an outlier.
     
-    Input:
-        df - Pandas dataframe
-        col_name - name of column to calculate threshold for
-        stat (optional) - either standard deviation (std) or interquantile range (iqr)
-        multiplier (optional) - multiplier for the stat
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data
+    var_name : str
+        Name of variable to calculate the thresholds for
+    use_iqr : bool, optional
+        Whether to use the interquartile range in calculating the thresholds, 
+        by default True. If False, the standard deviation is used.
+    multiplier : numeric, optional
+        Multiplier for the statistic to use in the calculation, by default 1.5
     
-    Output:
-        List of the lower and upper outlier thresholds
-    '''
+    Returns
+    -------
+    float
+        Lower outlier threshold
+    float
+        Upper outlier threshold
+    """
     
-    # Calculate threshold based on standard deviation
-    if stat == 'std':
-        avg = df[col_name].mean()
-        stdev = df[col_name].std()
-        lower = avg - stdev * multiplier
-        upper = avg + stdev * multiplier
-    
-    # Calculate threshold based on interquartile range
-    if stat == 'iqr':
-        q25 = df[col_name].quantile(0.25)
-        q75 = df[col_name].quantile(0.75)
+    if use_iqr: # use iqr
+        q25, q75 = df[var_name].quantile(0.25), df[var_name].quantile(0.75)
         iqr = q75 - q25
-        lower = q25 - iqr * multiplier
-        upper = q75 + iqr * multiplier
+        lower, upper = q25 - iqr * multiplier, q75 + iqr * multiplier
 
-    return [lower, upper]
+    else: # use stdev
+        avg, std = df[var_name].mean(), df[var_name].std()
+        lower, upper = avg - std * multiplier, avg + std * multiplier
+    
+    return lower, upper
 
 
 
