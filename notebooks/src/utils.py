@@ -136,34 +136,43 @@ def get_outlier_threshold(df, var_name, use_iqr=True, multiplier=1.5):
 ####################      CONVERSION      ####################
 
 
-def convert_readings(df, site_num, meter_num, convert_from, convert_to,
-                     site_col='site_id', meter_col='meter', reading_col='meter_reading'):
+def convert_readings(df, site, meter, convert_from, convert_to,
+                     site_col='site_id', meter_col='meter', 
+                     reading_col='meter_reading'):
     
-    '''
-    Function:
-        Convert the meter reading units of a meter type in a specified site
+    """
+    Convert the meter readings of a meter type in a specified site to another 
+    unit of measurement. Conversions include
+    (1) kbtu to kwh
+    (2) kwh to kbtu
+    (3) kbtu to ton
+    (4) ton to kbtu
         
-        Note: conversions include
-              (1) kbtu to kwh
-              (2) kwh to kbtu
-              (3) kbtu to ton
-              (4) ton to kbtu
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with the columns: site, meter type, and meter reading
+    site : int
+        Site number
+    meter : int
+        Meter type number
+    convert_from : str
+        Unit to convert from: "kbtu", "kwh", or "ton"
+    convert_to : str
+        Unit to convert to: "kbtu", "kwh", or "ton"
+    site_col : str, optional
+        Name of site column
+    meter_col : str, optional
+        Name of meter type column
+    reading_col : str, optional
+        Name of meter reading column
         
-    Input:
-        df - Pandas dataframe with the columns: site, meter type, and meter reading
-        site_num - number of site
-        meter_num - meter type number
-        convert_from - unit to convert from: "kbtu", "kwh", or "ton"
-        convert_to - unit to convert to: "kbtu", "kwh", or "ton"
-        site_col (optional) - name of site column
-        meter_col (optional) - name of meter type column
-        reading_col (optional) - name of meter reading column
-        
-        Note: pass in site_col, meter_col, and reading_col if different from defaults
-        
-    Output:
-        Pandas dataframe with converted units for a given meter type in a given site
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Data with converted units for the specified meter type in the specified 
+        site
+    """
     
     # Conversion multipliers
     kbtu_to_kwh = 0.2931
@@ -171,9 +180,10 @@ def convert_readings(df, site_num, meter_num, convert_from, convert_to,
     kbtu_to_ton = 0.0833
     ton_to_kbtu = 12
     
-    # Convert using multiplier
+    # Convert units using multiplier
     mult = eval(convert_from + '_to_' + convert_to)
-    df.loc[(df[site_col] == site_num) & (df[meter_col] == meter_num), reading_col] *= mult
+    df.loc[(df[site_col] == site) & (df[meter_col] == meter), 
+           reading_col] *= mult
     return df
 
 
