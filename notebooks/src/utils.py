@@ -189,20 +189,25 @@ def convert_readings(df, site, meter, convert_from, convert_to,
 
 def polar_to_cartesian(df, deg_col, drop_original=True):
     
-    '''
-    Function:
-        Break the polar degree values of a column into Cartesian x and y components
+    """
+    Break the polar degree values of a column into Cartesian x- and y-
+    components. As a special case, 0 degrees will yield 0 for both components.
         
-        Note: 0 degrees will be 0 for both components
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with a column in polar degrees
+    deg_col : str
+        Name of column with values in polar degrees
+    drop_original : bool, optional
+        Whether to drop the original column after creating the component 
+        columns, by default True
         
-    Input:
-        df - Pandas dataframe with a column in polar degrees
-        deg_col - name of column with values in polar degrees
-        drop_original (optional) - whether to drop the original column
-        
-    Output:
-        Pandas dataframe with additional columns: x and y
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Data with additional columns: x and y
+    """
     
     df[f'{deg_col}_x'] = np.cos(df[deg_col] * np.pi / 180).astype('float32')
     df[f'{deg_col}_y'] = np.sin(df[deg_col] * np.pi / 180).astype('float32')
@@ -210,7 +215,6 @@ def polar_to_cartesian(df, deg_col, drop_original=True):
     # Update x-component to 0 if y-component is 0
     df.loc[df[deg_col] == 0, f'{deg_col}_x'] = 0
     
-    # Drop original column
     if drop_original:
         df.drop(deg_col, axis=1, inplace=True)
     return df
@@ -218,19 +222,23 @@ def polar_to_cartesian(df, deg_col, drop_original=True):
 
 def calc_rel_humidity(T, Td):
     
-    '''
-    Function:
-        Calculate the relative humidity using air temperature and dew temperature
+    """
+    Calculate the relative humidity using air temperature and dew temperature.
         
-        Source: https://www.weather.gov/media/epz/wxcalc/vaporPressure.pdf
+    Source: https://www.weather.gov/media/epz/wxcalc/vaporPressure.pdf
         
-    Input:
-        T - air temperature in degrees Celsius
-        Td - dew temperature in degrees Celsius
+    Parameters
+    ----------
+    T : float
+        Air temperature in degrees Celsius
+    Td : float
+        Dew temperature in degrees Celsius
         
-    Output:
+    Returns
+    -------
+    float
         Relative humidity
-    '''
+    """
     
     e = 6.11 * 10.0 ** (7.5 * Td / (237.3 + Td))
     es = 6.11 * 10.0 ** (7.5 * T / (237.3 + T))
@@ -239,21 +247,25 @@ def calc_rel_humidity(T, Td):
 
 def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
     
-    '''
-    Function:
-        Convert timestamps to local time
+    """
+    Convert timestamps to local time
         
-    Input:
-        df - Pandas dataframe with columns: site and time
-        timezones - list of timezone offsets
-        site_col (optional) - name of site column
-        time_col (optional) - name of time column
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with columns: site and time
+    timezones : list[int]
+        Timezone offsets for each site
+    site_col : str, optional)
+        Name of site column
+    time_col : str, optional
+        Name of time column
         
-        Note: pass in site_col and time_col if different from defaults
-        
-    Output:
-        Pandas dataframe with local time
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Data with local time
+    """
     
     offset = df[site_col].map(lambda s: np.timedelta64(timezones[s], 'h'))
     df[time_col] += offset
