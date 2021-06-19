@@ -303,14 +303,16 @@ def missing_vals_by_site(df, pct=False, site_col='site_id',
     # # missing
     missing = df.groupby(site_col).count()
     for col in missing.columns[1:]:
-        missing[col] = missing.timestamp - missing[col]
-    missing.columns = [col if col == time_col else f'missing_{col}' for col in missing.columns]
+        missing[col] = missing[time_col] - missing[col]
+    missing.columns = [col if col == time_col else f'missing_{col}' 
+                       for col in missing.columns]
     
     # % missing
     pct_missing = missing.copy()
     for col in pct_missing.columns[1:]:
-        pct_missing[col] = round(100 * missing[col] / missing.timestamp, 2)
-    pct_missing.columns = [col if col == time_col else f'pct_{col}' for col in pct_missing.columns]
+        pct_missing[col] = round(missing[col] / missing[time_col] * 100, 2)
+    pct_missing.columns = [col if col == time_col else f'pct_{col}' 
+                           for col in pct_missing.columns]
     
     return pct_missing if pct else missing
     
