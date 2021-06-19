@@ -161,11 +161,11 @@ def convert_readings(df, site, meter, convert_from, convert_to,
     convert_to : str
         Unit to convert to: "kbtu", "kwh", or "ton"
     site_col : str, optional
-        Name of site column
+        Name of site column, by default "site_id"
     meter_col : str, optional
-        Name of meter type column
+        Name of meter type column, by default "meter"
     reading_col : str, optional
-        Name of meter reading column
+        Name of meter reading column, by default "meter_reading"
         
     Returns
     -------
@@ -256,10 +256,10 @@ def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
         Data with columns: site and time
     timezones : list[int]
         Timezone offsets for each site
-    site_col : str, optional)
-        Name of site column
+    site_col : str, optional
+        Name of site column, by default "site_id"
     time_col : str, optional
-        Name of time column
+        Name of time column, by default "timestamp"
         
     Returns
     -------
@@ -277,24 +277,28 @@ def to_local_time(df, timezones, site_col='site_id', time_col='timestamp'):
 ####################      MISSING VALUES      ####################
 
 
-def missing_vals_by_site(df, pct=False, site_col='site_id', time_col='timestamp'):
+def missing_vals_by_site(df, pct=False, site_col='site_id', 
+                         time_col='timestamp'):
     
-    '''
-    Function:
-        Count missing values by site
+    """
+    Count missing values by site, and optionally display them as percentages.
     
-    Input:
-        df - Pandas dataframe with columns: site and time
-        pct (optional) - boolean to indicate whether to convert the output to 
-                         percentages
-        site_col (optional) - name of site column
-        time_col (optional) - name of time column
-        
-        Note: pass in site_col and time_col if different from defaults
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with columns: site and time
+    pct : bool, optional
+        Whether to convert the output to percentages, by default False
+    site_col : str, optional
+        Name of site column, by default "site_id"
+    time_col : str, optional
+        Name of time column, by default "timestamp"
     
-    Output:
-        Pandas dataframe displaying a matrix of missing values by site
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Table of missing value count/percentage by site
+    """
 
     # # missing
     missing = df.groupby(site_col).count()
