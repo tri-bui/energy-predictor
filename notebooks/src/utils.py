@@ -361,28 +361,28 @@ def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols,
     return df
 
 
-def missing_readings_summary(df, bldg_col='building_id', meter_col='meter', time_col='timestamp'):
+def missing_readings_summary(df, bldg_col='building_id', meter_col='meter', 
+                             time_col='timestamp'):
     
-    '''
-    Function:
-        Print the details of missing meter readings
+    """
+    Print the details of missing meter readings.
         
-    Input:
-        df - Pandas dataframe with columns: building, meter type, and time
-        bldg_col (optional) - name of building column
-        meter_col (optional) - name of meter column
-        time_col (optional) - name of time column
-        
-        Note: pass in bldg_col, meter_col, and time_col if different from defaults
-        
-    Output:
-        None
-    '''
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with columns: building, meter type, and time
+    bldg_col : str, optional
+        Name of building column, by default "building_id"
+    meter_col : str, optional
+        Name of meter column, by default "meter"
+    time_col : str, optional
+        Name of time column, by default "timestamp"
+    """
     
     # Meter types
     types = ['electricity', 'chilledwater', 'steam', 'hotwater']
     
-    # Number of readings from each meter
+    # Num readings from each meter
     n_readings = df.groupby([bldg_col, meter_col], as_index=False).count()
     n_bldgs = n_readings[bldg_col].nunique() # number of buildings
     n_meters = n_readings[meter_col].value_counts() # readings from each meter
