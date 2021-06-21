@@ -317,45 +317,47 @@ def missing_vals_by_site(df, pct=False, site_col='site_id',
     return pct_missing if pct else missing
     
     
-def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols, site_col='site_id'):
+def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols, 
+                 site_col='site_id'):
     
-    '''
-    Function:
-        Fill missing values by site
+    """
+    Fill a dataframe's missing values by site. Since missing values are being 
+    filled using a site's existing data, sites missing 100% of their values 
+    will not be filled.
         
-        Note: sites missing 100% of the values will not be filled
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with site column
+    ffill_cols : list[str]
+        Columns to perform a simple forward/backward fill on
+    lin_interp_cols : list[str]
+        Columns to perform linear interpolation on, followed by a 
+        forward/backward fill
+    cub_interp_cols : list[str]
+        Columns to perform cubic interpolation on, followed by a 
+        forward/backward fill
+    site_col : str, optional
+        Name of site column, by defauult "site_id"
         
-    Input:
-        df - Pandas dataframe with site column
-        ffill_cols - list of columns to perform a simple forward fill and backward fill on
-        lin_interp_cols - list of columns to perform linear interpolation on
-        cub_interp_cols - list of columns to perform cubic interpolation on
-        site_col (optional) - name of site column
-        
-        Note: cols_to_interp_lin and cols_to_interp_cubic will also be forward-filled and 
-              backward-filled (after interpolation) to fill the beginning and end
-        Note: pass in site_col if different from default
-        
-    Output:
-        Pandas dataframe with missing data filled
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Dataframe with missing data filled
+    """
     
     for col in df.columns:
-        
-        if col in ffill_cols:
-            df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.fillna(method='ffill').fillna(method='bfill'))
-                    
-        if col in lin_interp_cols:
-            df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.interpolate('linear', limit_direction='both') \
-                                              .fillna(method='ffill').fillna(method='bfill'))
-            
-        if col in cub_interp_cols:
-            df[col] = df.groupby(site_col)[col] \
-                        .transform(lambda s: s.interpolate('cubic', limit_direction='both') \
-                                              .fillna(method='ffill').fillna(method='bfill'))
-
+        if col in ffill_cols: # forward/backward fill
+            df[col] = df.groupby(site_col)[col].transform(lambda s: \
+                        s.fillna(method='ffill').fillna(method='bfill'))
+        if col in lin_interp_cols: # linear interpolation
+            df[col] = df.groupby(site_col)[col].transform(lambda s: \
+                        s.interpolate('linear', limit_direction='both') \
+                         .fillna(method='ffill').fillna(method='bfill'))
+        if col in cub_interp_cols: # cubic interpolation
+            df[col] = df.groupby(site_col)[col].transform(lambda s: \
+                        s.interpolate('cubic', limit_direction='both') \
+                         .fillna(method='ffill').fillna(method='bfill'))
     return df
 
 
