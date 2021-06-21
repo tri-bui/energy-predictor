@@ -370,7 +370,7 @@ def missing_readings_summary(df, bldg_col='building_id', meter_col='meter',
     Parameters
     ----------
     df : pandas.core.frame.DataFrame
-        Data with columns: building, meter type, and time
+        Meter data with columns: building, meter type, and time
     bldg_col : str, optional
         Name of building column, by default "building_id"
     meter_col : str, optional
@@ -384,26 +384,28 @@ def missing_readings_summary(df, bldg_col='building_id', meter_col='meter',
     
     # Num readings from each meter
     n_readings = df.groupby([bldg_col, meter_col], as_index=False).count()
-    n_bldgs = n_readings[bldg_col].nunique() # number of buildings
-    n_meters = n_readings[meter_col].value_counts() # readings from each meter
+    n_bldgs = n_readings[bldg_col].nunique()
+    meter_readings = n_readings[meter_col].value_counts()
     
     # Meters with missing readings
     meters_with_missing = n_readings[n_readings[time_col] != 366 * 24]
-    pct_meters_with_missing = 100 * meters_with_missing.shape[0] // n_readings.shape[0] # percent
+    pct_meters_with_missing = 100 * meters_with_missing.shape[0] // \
+                              n_readings.shape[0] # %
     
-    # Buildings with meter(s) with missing readings
-    n_bldgs_with_missing = meters_with_missing[bldg_col].nunique() # number
-    pct_bldgs_with_missing = 100 * n_bldgs_with_missing // n_readings[bldg_col].nunique() # percent
+    # Buildings w/ meter(s) with missing readings
+    n_bldgs_with_missing = meters_with_missing[bldg_col].nunique() # count
+    pct_bldgs_with_missing = 100 * n_bldgs_with_missing // \ 
+                             n_readings[bldg_col].nunique() # %
     
     # Total missing readings by the 4 meter types
-    n_missing_by_type = meters_with_missing[meter_col].value_counts() # number
-    pct_missing_by_type = 100 * n_missing_by_type // n_meters # percent
+    n_missing_by_type = meters_with_missing[meter_col].value_counts() # count
+    pct_missing_by_type = 100 * n_missing_by_type // meter_readings # %
     
     # Total
     print('Buildings:', n_bldgs)
-    print('Total meters:', n_meters.sum())
+    print('Total meters:', meter_readings.sum())
     for i in range(len(types)):
-        print(types[i].capitalize(), 'meters:', n_meters[i])
+        print(types[i].capitalize(), 'meters:', meter_readings[i])
     
     # Total missing
     print('\nBuildings with meter(s) with missing readings:', 
