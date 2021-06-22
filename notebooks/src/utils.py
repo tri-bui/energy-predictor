@@ -361,7 +361,7 @@ def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols,
     return df
 
 
-def missing_readings_summary(df, bldg_col='building_id', meter_col='meter', 
+def readings_summary(df, bldg_col='building_id', meter_col='meter', 
                              time_col='timestamp'):
     
     """
@@ -394,7 +394,7 @@ def missing_readings_summary(df, bldg_col='building_id', meter_col='meter',
     
     # Buildings w/ meter(s) with missing readings
     n_bldgs_with_missing = meters_with_missing[bldg_col].nunique() # count
-    pct_bldgs_with_missing = 100 * n_bldgs_with_missing // \ 
+    pct_bldgs_with_missing = 100 * n_bldgs_with_missing // \
                              n_readings[bldg_col].nunique() # %
     
     # Total missing readings by the 4 meter types
@@ -403,14 +403,14 @@ def missing_readings_summary(df, bldg_col='building_id', meter_col='meter',
     
     # Total
     print('Buildings:', n_bldgs)
-    print('Total meters:', meter_readings.sum())
+    print('Meters:', meter_readings.sum())
     for i in range(len(types)):
         print(types[i].capitalize(), 'meters:', meter_readings[i])
     
     # Total missing
-    print('\nBuildings with meter(s) with missing readings:', 
+    print('\nBuildings with missing readings:', 
           n_bldgs_with_missing, f'({pct_bldgs_with_missing}%)')
-    print('Total meters with missing readings:',
+    print('Meters with missing readings:',
           meters_with_missing.shape[0], f'({pct_meters_with_missing}%)')
     for i in range(len(types)):
         print(types[i].capitalize(), 'meters with missing readings:',
