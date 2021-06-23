@@ -424,20 +424,24 @@ def readings_summary(df, bldg_col='building_id', meter_col='meter',
 
 def extract_dt_components(df, dt_components, time_col='timestamp'):
     
-    '''
-    Function:
-        Extract datetime components from a datetime column of a dataframe and add them as new columns
+    """
+    Extract datetime components from a datetime column of a dataframe and add 
+    them as new columns.
         
-    Input:
-        df - Pandas dataframe with a time column
-        dt_components - list of names of datetime components to extract
-        time_col (optional) - name of time column
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Meter data with time column
+    dt_components : list[str]
+        Names of datetime components to extract
+    time_col : str, optional
+        Name of time column, by default "timestamp"
         
-        Note: pass in time_col if different from default
-        
-    Output:
-        Pandas dataframe with added columns
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Data with added datetime columns
+    """
     
     for comp in dt_components:
         if comp == 'dayofyear':
@@ -453,24 +457,30 @@ def extract_dt_components(df, dt_components, time_col='timestamp'):
     return df
 
 
-def get_site(df, site_num, time_idx=False, site_col='site_id', time_col='timestamp'):
+def get_site(df, site_num, time_idx=False, site_col='site_id', 
+             time_col='timestamp'):
     
-    '''
-    Function:
-        Extract the data from 1 site
+    """
+    Extract the data from 1 site, and optionally use datetime as the index.
         
-    Input:
-        df - Pandas dataframe with a site column and time column
-        site_num - number of site to extract
-        time_idx (optional) - boolean to indicate weather to set the time as the index
-        site_col (optional) - name of site column
-        time_col (optional) - name of time column
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame 
+        Data with columns: site and time
+    site_num : int
+        Number of site to extract data for
+    time_idx : bool, optional
+        Whether to set the time as the index, by default False
+    site_col : str, optional
+        Name of site column, by default "site_id"
+    time_col : str, optional
+        Name of time column, by default "timestamp"
         
-        Note: pass in site_col and time_col if different from defaults
-        
-    Output:
-        Pandas dataframe with data from 1 site
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame 
+        Data from the specified site
+    """
     
     df = df[df[site_col] == site_num].drop(site_col, axis=1)
     if time_idx:
