@@ -492,7 +492,7 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id',
                     time_col='timestamp'):
     
     """
-    Reindex a dataframe to include a timestamp for every hour within the time 
+    Fill a dataframe with timestamps for every hour within the specified time 
     interval in every site.
         
     Parameters
@@ -517,14 +517,12 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id',
     """
     
     sites = df[site_col].unique() # unique sites
-    frame = df.set_index([site_col, time_col]) # index site and time
+    frame = df.set_index([site_col, time_col]) # idx site and time
+    frame = frame.reindex(pd.MultiIndex.from_product(
+        [sites, pd.date_range(start=t_start, end=t_end, freq='H')]
+    ))
     
-    # Reindex
-    frame = frame.reindex(
-        pd.MultiIndex.from_product([sites, pd.date_range(start=t_start, end=t_end, freq='H')])
-    )
-    
-    # Reset indices back to columns
+    # Reset idxs back to cols
     frame.index.rename([site_col, time_col], inplace=True)
     return frame.reset_index()
 
