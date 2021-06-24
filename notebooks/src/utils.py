@@ -488,25 +488,33 @@ def get_site(df, site_num, time_idx=False, site_col='site_id',
     return df
 
 
-def reidx_site_time(df, t_start, t_end, site_col='site_id', time_col='timestamp'):
+def reidx_site_time(df, t_start, t_end, site_col='site_id', 
+                    time_col='timestamp'):
     
-    '''
-    Function:
-        Reindex dataframe to include a timestamp for every hour within the time interval for every 
-        site
+    """
+    Reindex a dataframe to include a timestamp for every hour within the time 
+    interval in every site.
         
-    Input:
-        df - Pandas dataframe with columns: site and time
-        t_start - first timestamp in the format '{month}/{day}/{year} hh:mm:ss'
-        t_end - last timestamp in the same format
-        site_col (optional) - name of site column
-        time_col (optional) - name of time column
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame 
+        Data with columns: site and time
+    t_start : str
+        First timestamp in the interval, with the format 
+        '{month}/{day}/{year} hh:mm:ss'
+    t_end : str
+        Last timestamp in the interval, with the format 
+        '{month}/{day}/{year} hh:mm:ss'
+    site_col : str, optional
+        Name of site column, by default "site_id"
+    time_col : str, optional
+        Name of time column, by default "timestamp"
         
-        Note: pass in site_col and time_col if different from defaults
-        
-    Output:
-        Pandas dataframe with complete timestamps
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame 
+        Data with complete timestamps for every site
+    """
     
     sites = df[site_col].unique() # unique sites
     frame = df.set_index([site_col, time_col]) # index site and time
