@@ -497,7 +497,7 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id',
         
     Parameters
     ----------
-    df : pandas.core.frame.DataFrame 
+    df : pandas.core.frame.DataFrame
         Data with columns: site and time
     t_start : str
         First timestamp in the interval, with the format 
@@ -535,19 +535,20 @@ def reidx_site_time(df, t_start, t_end, site_col='site_id',
 def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3), 
                   colors=sns.color_palette(n_colors=8)):
     
-    '''
-    Function:
-        Plot the value distribution of specified columns of a dataframe
+    """
+    Plot the value distribution of specified columns of a dataframe.
         
-    Input:
-        df - Pandas dataframe with numeric columns
-        cols - array-like of column indices to plot
-        bins - number of bins to use for the histograms
-        colors - iterable of colors to use for subplots
-        
-    Output:
-        None
-    '''
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with numeric columns
+    cols : list[int]
+        Indices of columnns to plot
+    bins : int, optional
+        Number of bins to use in the histograms
+    Colors - list
+        Colors to use in the subplots
+    """
     
     for i in cols:
         fig = plt.figure(figsize=subplot_figsize)
