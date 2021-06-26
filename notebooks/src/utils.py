@@ -556,34 +556,44 @@ def hist_subplots(df, cols, bins=40, subplot_figsize=(15, 3),
         plt.xlabel(df.columns[i].replace('_', ' ').capitalize())
 
 
-def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None, ticks=None, 
-                  bldg_first=False, figsize=(15, 3), time_col='timestamp', bldg_col='building_id', 
+def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None, 
+                  ticks=None, bldg_first=False, figsize=(15, 3), 
+                  time_col='timestamp', bldg_col='building_id', 
                   meter_col='meter', read_col='meter_reading'):
     
-    '''
-    Function:
-        Plot readings from 1 or more of each type of meter
+    """
+    Plot readings from 1 or more of each type of meter
         
-    Input:
-        df - Pandas dataframe with columns: building, meter type, and time
-        bldg_list - array-like of buildings
-        start (optional) - start index to slice buildings on
-        end (optional) - end index to slice buildings on
-        resample (optional) - resampling frequency if resampling by time
-        groupby (optional) - list of columns to group by if aggregating
-        ticks (optional) - range of xtick locations
-        bldg_first (optional) - boolean to indicate whether to iterate through buildings before meters
-        figsize (optional) - tuple with width and height of plot
-        time_col (optional) - name of time column
-        bldg_col (optional) - name of building column
-        meter_col (optional) - name of meter type column
-        read_col (optional) - name of meter reading column
-        
-        Note: pass in time_col, bldg_col, meter_col, and read_col if different from defaults
-        
-    Output:
-        None
-    '''
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with columns: building, meter type, and time
+    bldg_list : list[int]
+        Buildings to plot readings for
+    start : int, optional
+        Start index to slice buildings on, by default 0
+    end : int, optional
+        End index to slice buildings on, by default 1
+    resample : str, optional
+        Resampling frequency if resampling by time, by default None
+    groupby : list[str], optional
+        Columns to group by if aggregating, by default None
+    ticks : range, optional
+        Range of xtick locations, by default None
+    bldg_first : bool, optional
+        Whether to iterate through buildings before meters when plotting, by 
+        default False
+    figsize :tuple(int, int), optional
+        Width and height of each plot, by default (15, 3)
+    time_col : str, optional
+        Name of time column, by default "timestamp"
+    bldg_col : str, optional
+        Name of building column, by default "building_id"
+    meter_col : str, optional
+        Name of meter type column, by default "meter"
+    read_col : str, optional
+        Name of meter reading column, by default "meter_reading"
+    """
     
     # Set time as index
     df = df.set_index(time_col)
