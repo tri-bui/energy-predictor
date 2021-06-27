@@ -562,7 +562,9 @@ def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None,
                   meter_col='meter', read_col='meter_reading'):
     
     """
-    Plot readings from 1 or more of each type of meter
+    Plot readings from 1 or more of each type of meter. If iterating through 
+    meter type first when plotting, optionally resample the time frequency or 
+    aggregate by specified columns using the mean.
         
     Parameters
     ----------
@@ -601,8 +603,8 @@ def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None,
     
     # Plot readings from all meters of each building in the list
     if bldg_first:
-        for b in bldg_list: # for each building
-            for m in df[df[bldg_col] == b][meter_col].unique(): # for each meter
+        for b in bldg_list: # for each bldg
+            for m in df[df[bldg_col] == b][meter_col].unique(): # for each mtr
                 fig = plt.figure(figsize=figsize)
                 bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
                 bm.resample('d').mean()[read_col].plot() # plot daily mean
@@ -612,11 +614,11 @@ def plot_readings(df, bldg_list, start=0, end=1, resample=None, groupby=None,
                 
     # Plot readings from a number of each meter type
     else:
-        for m in range(len(types)): # for each meter type
-            for b in bldg_list[m][start:end]: # for each building
+        for m in range(len(types)): # for each mtr type
+            for b in bldg_list[m][start:end]: # for each bldg
                 fig = plt.figure(figsize=figsize)
                 bm = df[(df[bldg_col] == b) & (df[meter_col] == m)]
-                if resample: # if resampling time frequency
+                if resample: # if resampling time freq
                     bm = bm.resample(resample).mean()
                 if groupby: # if aggregating with mean
                     bm = bm.groupby(groupby).mean()
