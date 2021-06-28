@@ -632,30 +632,43 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp', pivot_vals='meter_
                         legend_pos=(1, 1), legend_col=1, cols_to_sep=[], add_to_title='', 
                         figsize=(15, 5), meter_col='meter', type_col='type'):
     
-    '''
-    Function:
-        Pivot and plot electric meter readings by a specified feature, optionally resampling by time
+    """
+    Pivot and plot electric meter reading data by a specified feature, 
+    optionally resampling by time. Plot columns with a different scale 
+    separately for a better view.
         
-    Input:
-        df - Pandas dataframe with 2 meter type columns (1 is integer-encoded)
-        pivot_col - name of column to pivot to columns
-        pivot_idx (optional) - name of column to pivot to index
-        pivot_vals (optional) - name of column to aggregate for pivot table
-        freq (optional) - resampling frequency if resampling by time
-        legend_pos (optional) - tuple to indicate the legend's anchor position
-        legend_col (optional) - number of columns in legend
-        cols_to_sep (optional) - list of columns to plot separately
-        add_to_title (optional) - text to add to title
-        figsize (optional) - tuple to indicate the size of the figure
-        meter_col (optional) - name of meter type number column as integers
-        type_col (optional) - name of meter type column as strings
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with 2 meter type columns (1 is numerically encoded)
+    pivot_col : str
+        Name of column to pivot to columns
+    pivot_idx : str, optional
+        Name of column to pivot to index, by default "timestamp"
+    pivot_vals : str, optional
+        Name of column to aggregate for pivot table, by default "meter_reading"
+    freq : str, optional
+        Resampling frequency if resampling by time, by default None
+    legend_pos : tuple(num, num), optional
+        Position for legend, by default (1, 1)
+    legend_col : int, optional
+        Number of columns in legend, by default 1
+    cols_to_sep : list[str], optional
+        Columns to plot separately, by default an empty list
+    add_to_title : str, optional
+        Text to add to title, by default an empty string
+    figsize : tuple(int, int), optional
+        Width and height of the plot, by default (15, 5)
+    meter_col : str, optional
+        Name of meter type integer column, by default 'meter'
+    type_col : str, optional
+        Name of meter type string column, by default 'type'
         
-        Note: plot columns with a different scale separately for a better view
-        Note: pass in time_col, building_col, meter_col, and reading_col if different from defaults
-        
-    Output:
-        Pandas dataframe of the pivot table
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame 
+        Pivot table of electric meter readings
+    """
     
     elec = df.pivot_table(index=pivot_idx, columns=pivot_col, values=pivot_vals, aggfunc='mean')
     if freq: # resample by time
