@@ -698,25 +698,31 @@ def pivot_elec_readings(df, pivot_col, pivot_idx='timestamp',
     
 def plot_rare_cats(df, col, tol=0.05):
     
-    '''
-    Function:
-        Plot the value counts of each category of a feature
+    """
+    Plot the value counts of each category of a feature, with a red line to 
+    indicate the threshold that determines which categories are rare if they 
+    are below the line.
         
-    Input:
-        df - Pandas dataframe with a categorical column
-        col - name of categorical column
-        tol (optional) - frequency threshold to categorize as a rare label
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data with a categorical column
+    col : str
+        Name of categorical column to plot
+    tol : float, optional
+        Frequency threshold to categorize as a rare label, by default 0.05
         
-    Output:
-        Pandas series of value counts
-    '''
+    
+    Returns
+    -------
+    pandas.core.series.Series
+        Category value counts
+    """
 
     counts = df[col].value_counts()
-    
     counts.plot.bar()
     plt.axhline(y=df.shape[0] * tol, color='red')
     plt.xticks(rotation=45, ha='right')
-    
     return counts
 
 
