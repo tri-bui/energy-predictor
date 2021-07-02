@@ -726,19 +726,22 @@ def plot_rare_cats(df, col, tol=0.05):
     return counts
 
 
-def constant_feats(df):
+def check_constant_feats(df):
     
-    '''
-    Function:
-        Check a Pandas dataframe for constant and quasi-constant features
+    """
+    Check for constant and quasi-constant features.
         
-    Input:
-        df - Pandas dataframe
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data to check
         
-    Output:
-        Pandas dataframe showing the variance of each variable and wether
-        they're a constant/quasi-constant feature
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Table showing the variance of each variable and whether they are a 
+        constant/quasi-constant feature
+    """
     
     const = pd.DataFrame(df.var(), columns=['variance'])
     const['constant'] = const.variance == 0
