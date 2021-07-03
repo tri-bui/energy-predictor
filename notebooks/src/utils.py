@@ -729,7 +729,9 @@ def plot_rare_cats(df, col, tol=0.05):
 def check_constant_feats(df):
     
     """
-    Check for constant and quasi-constant features.
+    Check for constant and quasi-constant features. Constant features are 
+    features that only have 1 unique value. Quasi-constant features are 
+    features with most of its values being 1 unique value.
         
     Parameters
     ----------
@@ -749,18 +751,22 @@ def check_constant_feats(df):
     return const.T
     
     
-def duplicated_feats(df):
+def check_duplicated_feats(df):
     
-    '''
-    Function:
-        Check a Pandas dataframe for duplicated features
+    """
+    Check for duplicated features. Duplicated features are features that have 
+    the same value for every observation.
         
-    Input:
-        df - Pandas dataframe
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Data to check
         
-    Output:
-        A list of pairs of duplicated features (in tuples)
-    '''
+    Returns
+    -------
+    list[tuple(str, str)]
+        Pairs of duplicated features
+    """
     
     dup = []
     for i, col1 in enumerate(df.columns[:-1]):
