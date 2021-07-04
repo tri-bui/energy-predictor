@@ -776,20 +776,25 @@ def check_duplicated_feats(df):
     return dup
 
 
-def correlated_feats(corr_df, threshold):
+def check_correlated_feats(corr_df, threshold):
     
-    '''
-    Function:
-        Check a Pandas dataframe for correlated features
+    """
+    Check for highly correlated features. Highly correlated features are 
+    features that have close linear relationship. The metric used here is the 
+    Pearson correlationn coefficient.
         
-    Input:
-        corr_df - Pandas dataframe with correlation coefficients
-        threshold - coefficient threshold to consider high corrrelation
+    Parameters
+    ----------
+    corr_df : pandas.core.frame.DataFrame
+        Table of correlation coefficients between features
+    threshold : float
+        Coefficient threshold to consider as high corrrelation
         
-    Output:
-        A list of tuples containing the correlated features and their
-        correlation coefficient
-    '''
+    Returns
+    -------
+    list[tuple(str, str, float)]
+        Pairs of highly correlated features and their correlation coefficient
+    """
 
     pairs = []
     for i, feat1 in enumerate(corr_df.columns[:-1]):
