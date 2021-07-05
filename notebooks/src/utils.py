@@ -807,18 +807,25 @@ def check_correlated_feats(corr_df, threshold):
 
 def inc_feat_count(count_df, feats, count_col='count'):
     
-    '''
-    Function:
-        Increment the count for selected features
+    """
+    Increment the count for selected features in the feature count table. This 
+    table keeps count of the number of times each feature was selected using a 
+    different method of feature selection
         
-    Input:
-        count_df - Pandas dataframe keeping count of selected features
-        feats - list of selected features
-        count_col (optional) - name of count column
+    Parameters
+    ----------
+    count_df : pandas.core.frame.DataFrame
+        Table keeping count of selected features
+    feats : list[str] 
+        Selected features
+    count_col str, optional
+        Name of count column, by default "count"
         
-    Output:
-        Pandas dataframe with updated counts
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame 
+        Feature count table with updated counts
+    """
     
     for feat in feats:
         count_df.loc[feat, count_col] += 1
