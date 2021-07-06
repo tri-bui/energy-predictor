@@ -832,23 +832,30 @@ def inc_feat_count(count_df, feats, count_col='count'):
     return count_df
 
 
-def feats_from_model(X, y, sel_model, ml_model):
+def feats_from_model(X, y, sel_transformer, ml_model):
     
-    '''
-    Function:
-        Select features using a machine learning model
+    """
+    Select features using a feature selection transformer and machine learning 
+    model.
         
-    Input:
-        X - data
-        y - target
-        sel_model - name of scikit-learn feature selection transformer
-        ml_model - scikit-learn estimator
+    Parameters
+    ----------
+    X : pandas.core.frame.DataFrame
+        Data with feature variables
+    y : pandas.core.series.Series
+        Target variable
+    sel_transformer : sklearn meta-transformer
+        Feature selection transformer
+    ml_model : sklearn estimator
+        Machine learning model
         
-    Output:
-        List of selected features
-    '''
+    Returns
+    -------
+    list[str]
+        Selected features
+    """
     
-    sel = sel_model(ml_model).fit(X, y)
+    sel = sel_transformer(ml_model).fit(X, y)
     return X.columns[sel.get_support()].tolist()
 
 
