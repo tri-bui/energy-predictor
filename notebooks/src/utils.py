@@ -832,7 +832,7 @@ def inc_feat_count(count_df, feats, count_col='count'):
     return count_df
 
 
-def feats_from_model(X, y, sel_transformer, ml_model):
+def sel_from_model(X, y, sel_transformer, ml_model):
     
     """
     Select features using a feature selection transformer and machine learning 
@@ -860,29 +860,50 @@ def feats_from_model(X, y, sel_transformer, ml_model):
 
 
 def rare_encoder(var_list, train, test, val=None, tol=0.05, 
-                 path='../models/transformers/rare_enc/', name='rare_enc', suffix=''):
+                 file_path='../models/transformers/rare_enc/', 
+                 file_name='rare_enc', file_suffix=''):
     
-    '''
-    Function:
-        Apply feature_engine's RareLabelEncoder to both a train and test set
+    """
+    Encode rare labels of categorical features in the training set, test set, 
+    and optionally the validation set. This function uses feature_engine's 
+    RareLabelEncoder to encode the rare labels. In the specified features, if 
+    the proportion of any label in all observations is less than the `tol` 
+    threshold, then it is replaced with the label "rare".
     
-    Input:
-        var_list - list of features to encode (must be object type)
-        train - train data
-        test - test data
-        tol (optional) - frequency threshold to categorize as a rare label
-        val (optional) - validation data
-        path (optional) - output directory path
-        name (optional) - output file name
-        suffix (optional) - suffix to add to file name before file extension
+    Parameters
+    ----------
+    var_list : list[str]
+        Categorical features to encode
+    train : pandas.core.frame.DataFrame
+        Training data
+    test : pandas.core.frame.DataFrame
+        Test data
+    val : pandas.core.frame.DataFrame, optional
+        Validation data, by default None
+    tol : float, optional
+        Frequency threshold at which to consider a label rare, by default 0.05
+    file_path : str, optional
+        Output directory path, by default "../models/transformers/rare_enc/"
+    file_name : str, optional
+        Output file name, by default "rare_enc"
+    file_suffix : str, optional
+        File name suffix that goes before the file extension, by default an 
+        empty string
     
-    Output:
-        Transformed train set, transformed validation set, transformed test set, 
-        dictionary of encoded values
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Transformed train set
+    pandas.core.frame.DataFrame
+        Transformed validation set
+    pandas.core.frame.DataFrame
+        Transformed test set
+    dict
+        Mapping of original to encoded values
+    """
     
     enc = RareLabelEncoder(tol=tol, variables=var_list).fit(train)
-    joblib.dump(enc, path + name + suffix + '.pkl') # save encoder
+    joblib.dump(enc, file_path + file_name + file_suffix + '.pkl') # save encoder
     train = enc.transform(train)
     test = enc.transform(test)
     if val is not None:
