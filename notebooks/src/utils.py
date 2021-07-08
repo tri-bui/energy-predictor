@@ -865,10 +865,11 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
     
     """
     Encode rare labels of categorical features in the training set, test set, 
-    and optionally the validation set. This function uses feature_engine's 
-    RareLabelEncoder to encode the rare labels. In the specified features, if 
-    the proportion of any label in all observations is less than the `tol` 
-    threshold, then it is replaced with the label "rare".
+    and optionally the validation set. In the specified features, if the 
+    proportion of any label in all observations is less than the `tol` 
+    threshold, then it is replaced with the label "rare". This function uses 
+    feature_engine's RareLabelEncoder to encode the rare labels. The encoder 
+    will be saved to the specified path.
     
     Parameters
     ----------
@@ -903,7 +904,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
     """
     
     enc = RareLabelEncoder(tol=tol, variables=var_list).fit(train)
-    joblib.dump(enc, file_path + file_name + file_suffix + '.pkl') # save encoder
+    joblib.dump(enc, file_path + file_name + file_suffix + '.pkl')
     train = enc.transform(train)
     test = enc.transform(test)
     if val is not None:
