@@ -1,11 +1,12 @@
 ####################      DEPENDENCIES      ####################
 
 
-import joblib
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import joblib
 from feature_engine.encoding import RareLabelEncoder, MeanEncoder
 from sklearn.preprocessing import StandardScaler
 
@@ -904,7 +905,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
     """
     
     enc = RareLabelEncoder(tol=tol, variables=var_list).fit(train)
-    joblib.dump(enc, file_path + file_name + file_suffix + '.pkl')
+    joblib.dump(enc, os.path.join(file_path, file_name + file_suffix + '.pkl'))
     train = enc.transform(train)
     test = enc.transform(test)
     if val is not None:
