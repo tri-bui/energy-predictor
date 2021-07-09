@@ -914,26 +914,46 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
 
 
 def mean_encoder(var_list, X_train, y_train, X_test, X_val=None, 
-                 path='../models/transformers/mean_enc/', name='mean_enc', suffix=''):
+                 file_path='../models/transformers/mean_enc/', 
+                 file_name='mean_enc', file_suffix=''):
     
-    '''
-    Function:
-        Apply feature_engine's MeanEncoder to both a train and test set
+    """
+    Encode labels of categorical features using each label's mean target value 
+    in the training set, test set, and optionally the validation set. This 
+    function uses feature_engine's MeanEncoder to encode the labels. The 
+    encoder will be saved to the specified path.
     
-    Input:
-        var_list - list of features to encode (must be object type)
-        X_train - train data
-        y_train - train label
-        X_test - test data
-        X_val (optional) - validation data
-        path (optional) - output directory path
-        name (optional) - output file name
-        suffix (optional) - suffix to add to file name before file extension
+    Parameters
+    ----------
+    var_list : list[str]
+        Categorical features to encode
+    X_train : pandas.core.frame.DataFrame
+        Training set feature variables
+    y_train : pandas.core.series.Series
+        Training set target variables
+    X_test : pandas.core.frame.DataFrame
+        Test set feature variables
+    X_val : pandas.core.frame.DataFrame, optional
+        Validation set feature variables, by default None
+    file_path : str, optional
+        Output directory path, by default "../models/transformers/mean_enc/"
+    file_name : str, optional
+        Output file name, by default "mean_enc"
+    file_suffix : str, optional
+        File name suffix that goes before the file extension, by default an 
+        empty string
     
-    Output:
-        Transformed train set, transformed validation set, transformed test set, 
-        dictionary of encoded values
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Transformed train set
+    pandas.core.frame.DataFrame
+        Transformed validation set
+    pandas.core.frame.DataFrame
+        Transformed test set
+    dict
+        Mapping of original to encoded values
+    """
     
     enc = MeanEncoder(variables=var_list).fit(X_train, y_train)
     joblib.dump(enc, path + name + suffix + '.pkl') # save encoder
