@@ -956,7 +956,7 @@ def mean_encoder(var_list, X_train, y_train, X_test, X_val=None,
     """
     
     enc = MeanEncoder(variables=var_list).fit(X_train, y_train)
-    joblib.dump(enc, path + name + suffix + '.pkl') # save encoder
+    joblib.dump(enc, os.path.join(file_path, file_name + file_suffix + '.pkl'))
     X_train = enc.transform(X_train)
     X_test = enc.transform(X_test)
     if X_val is not None:
