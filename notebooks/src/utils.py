@@ -1002,7 +1002,8 @@ def scale_feats(train, test, val=None,
     """
     
     scaler = StandardScaler().fit(train)
-    joblib.dump(scaler, path + name + suffix + '.pkl') # save scaler
+    joblib.dump(scaler, os.path.join(file_path, 
+                                     file_name + file_suffix + '.pkl'))
     train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns)
     test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns)
     if val is not None:
