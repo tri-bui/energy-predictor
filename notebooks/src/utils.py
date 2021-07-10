@@ -965,23 +965,41 @@ def mean_encoder(var_list, X_train, y_train, X_test, X_val=None,
 
     
 def scale_feats(train, test, val=None, 
-                path='../models/transformers/scaler/', name='scaler', suffix=''):
+                file_path='../models/transformers/scaler/', 
+                file_name='scaler', file_suffix=''):
 
-    '''
-    Function:
-        Apply scikit-learn's StandardScaler to both a train and test set
+    """
+    Scale the feature values of the training set, test set, and optionally the 
+    validationn set. The scaling will be based on the feature means and 
+    standard deviations of the training set. This function uses scikit-learn's 
+    StandardScaler to scale the features. The scaler will be saved to the 
+    specified path.
     
-    Input:
-        train - train data
-        test - test data
-        val (optional) - validation data
-        path (optional) - output directory path
-        name (optional) - output file name
-        suffix (optional) - suffix to add to file name before file extension
+    Parameters
+    ----------
+    train : pandas.core.frame.DataFrame
+        Training set feature variables
+    test : pandas.core.frame.DataFrame
+        Test set feature variables
+    val : pandas.core.frame.DataFrame, optional
+        Validation set feature variables, by default None
+    file_path : str, optional
+        Output directory path, by default "../models/transformers/scaler/"
+    file_name : str, optional
+        Output file name, by default "scaler"
+    file_suffix : str, optional
+        File name suffix that goes before the file extension, by default an 
+        empty string
     
-    Output:
-        Transformed train set, transformed test set
-    '''
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Scaled train set
+    pandas.core.frame.DataFrame
+        Scaled validation set
+    pandas.core.frame.DataFrame
+        Scaled test set
+    """
     
     scaler = StandardScaler().fit(train)
     joblib.dump(scaler, path + name + suffix + '.pkl') # save scaler
