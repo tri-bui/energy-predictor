@@ -860,6 +860,32 @@ def sel_from_model(X, y, sel_transformer, ml_model):
     return X.columns[sel.get_support()].tolist()
 
 
+def encode_cat(encoder, df, cols_to_encode):
+    
+    """
+    Numerically encoded categorical columns. This function uses one of 
+    sklearn's encoders.
+        
+    Parameters
+    ----------
+    encoder : sklearn transformer
+        Encoder transformer
+    df : pandas.core.frame.DataFrame
+        Data with categorical column(s)
+    col_to_encode : list[str]
+        Categorical columns to encode
+        
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        Encoded categories
+    """
+    
+    encoded = encoder.fit_transform(df[[cols_to_encode]])
+    encoded = pd.DataFrame(encoded, columns=encoder.categories_)
+    return encoded.astype('uint8')
+
+
 def rare_encoder(var_list, train, test, val=None, tol=0.05, 
                  file_path='../models/transformers/rare_enc/', 
                  file_name='rare_enc', file_suffix=''):
@@ -1009,23 +1035,3 @@ def scale_feats(train, test, val=None,
     if val is not None:
         val_scaled = pd.DataFrame(scaler.transform(val), columns=val.columns)
     return train_scaled, val_scaled, test_scaled
-
-
-def encode_cat(encoder, df, col_to_encode):
-    
-    '''
-    Function:
-        Numerically encoded a categorical column of a Pandas dataframe
-        
-    Input:
-        encoder - an encoder transformer from Sklearn with dense output
-        df - Pandas dataframe with a categorical column
-        col_to_encode - name of categorical column
-        
-    Output:
-        Pandas dataframe of encoded categories
-    '''
-    
-    encoded = encoder.fit_transform(df[[col_to_encode]])
-    encoded = pd.DataFrame(encoded, columns=encoder.categories_)
-    return encoded.astype('uint8')
