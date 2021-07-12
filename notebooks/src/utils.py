@@ -886,7 +886,7 @@ def encode_cat(encoder, df, cols_to_encode):
     return encoded.astype('uint8')
 
 
-def rare_encoder(var_list, train, test, val=None, tol=0.05, 
+def encode_rare_labels(var_list, train, test, val=None, tol=0.05, 
                  file_path='../models/transformers/rare_enc/', 
                  file_name='rare_enc', file_suffix=''):
     
@@ -939,7 +939,7 @@ def rare_encoder(var_list, train, test, val=None, tol=0.05,
     return train, val, test, enc.encoder_dict_
 
 
-def mean_encoder(var_list, X_train, y_train, X_test, X_val=None, 
+def encode_mean_labels(var_list, X_train, y_train, X_test, X_val=None, 
                  file_path='../models/transformers/mean_enc/', 
                  file_name='mean_enc', file_suffix=''):
     
