@@ -457,7 +457,7 @@ def extract_dt_components(df, dt_components, time_col='timestamp'):
     return df
 
 
-def get_site(df, site_num, time_idx=False, site_col='site_id', 
+def get_site(df, site, time_idx=False, site_col='site_id', 
              time_col='timestamp'):
     
     """
@@ -467,7 +467,7 @@ def get_site(df, site_num, time_idx=False, site_col='site_id',
     ----------
     df : pandas.core.frame.DataFrame 
         Data with columns: site and time
-    site_num : int
+    site : int
         Number of site to extract data for
     time_idx : bool, optional
         Whether to set the time as the index, by default False
@@ -482,7 +482,7 @@ def get_site(df, site_num, time_idx=False, site_col='site_id',
         Data from the specified site
     """
     
-    df = df[df[site_col] == site_num].drop(site_col, axis=1)
+    df = df[df[site_col] == site].drop(site_col, axis=1)
     if time_idx:
         df.set_index(time_col, inplace=True)
     return df
