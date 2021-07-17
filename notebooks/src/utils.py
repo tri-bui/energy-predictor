@@ -362,7 +362,7 @@ def fill_missing(df, ffill_cols, lin_interp_cols, cub_interp_cols,
 
 
 def readings_summary(df, bldg_col='building_id', meter_col='meter', 
-                             time_col='timestamp'):
+                     time_col='timestamp'):
     
     """
     Print the details of missing meter readings.
@@ -887,8 +887,8 @@ def encode_cat(encoder, df, cols_to_encode):
 
 
 def encode_rare_labels(var_list, train, test, val=None, tol=0.05, 
-                 file_path='../models/transformers/rare_enc/', 
-                 file_name='rare_enc', file_suffix=''):
+                       file_path='../models/transformers/rare_enc/', 
+                       file_name='rare_enc', file_suffix=''):
     
     """
     Encode rare labels of categorical features in the training set, test set, 
@@ -940,8 +940,8 @@ def encode_rare_labels(var_list, train, test, val=None, tol=0.05,
 
 
 def encode_mean_labels(var_list, X_train, y_train, X_test, X_val=None, 
-                 file_path='../models/transformers/mean_enc/', 
-                 file_name='mean_enc', file_suffix=''):
+                       file_path='../models/transformers/mean_enc/', 
+                       file_name='mean_enc', file_suffix=''):
     
     """
     Encode labels of categorical features using each label's mean target value 
