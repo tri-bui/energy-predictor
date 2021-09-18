@@ -16,4 +16,4 @@ lgb/
 *.log*
 *.csv*
 *aws*.sh
-
+._*
