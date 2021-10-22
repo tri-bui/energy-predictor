@@ -1,12 +1,13 @@
 import sys
 import logging
 from logging.handlers import TimedRotatingFileHandler
-
 from gb_model.config import config
 
 
+# Path to log file
 LOG_FILE = config.LOG_PATH / 'model.log'
 
+# Log format
 FORMATTER = logging.Formatter(
 	'%(levelname)s - %(asctime)s - %(name)s - '
 	'%(funcName)s:%(lineno)d - %(message)s'
@@ -29,9 +30,7 @@ def get_file_handler():
 def get_logger(logger_name):
 	logger = logging.getLogger(logger_name)
 	logger.setLevel(logging.DEBUG)
-
 	logger.addHandler(get_console_handler())
 	logger.addHandler(get_file_handler())
-
 	logger.propagate = False
 	return logger
