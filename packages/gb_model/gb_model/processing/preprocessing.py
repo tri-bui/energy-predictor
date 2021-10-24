@@ -46,7 +46,6 @@ class TimeReindexer(BaseEstimator, TransformerMixin):
 	"""
 
 	def __init__(self, site_var='site_id', time_var='timestamp'):
-		# t_start and t_end are strings in the format 'YYYY-MM-DD hh:mm:ss'
 		self.site_var = site_var
 		self.time_var = time_var
 		self.sites = None
@@ -113,25 +112,25 @@ class DataCopier(BaseEstimator, TransformerMixin):
 	:param site_var: (string) name of site variable
 
 	:param var_to_copy: (string) name of variable to copy
-	:param copy_from_site: (integer) site to copy data from
-	:param copy_to_site: (integer) site to copy data to
+	:param from_site: (integer) site to copy data from
+	:param to_site: (integer) site to copy data to
 	"""
 
 	def __init__(self, site_var='site_id'):
 		self.site_var = site_var
 		self.var_to_copy = None
-		self.copy_from_site = None
-		self.copy_to_site = None
+		self.from_site = None
+		self.to_site = None
 		self.from_idx = None
 		self.to_idx = None
 
-	def fit(self, X, y=None, var_to_copy='sea_level_pressure', 
-			copy_from_site=1, copy_to_site=5):
+	def fit(self, X, y=None, var_to_copy='sea_level_pressure', from_site=1, 
+			to_site=5):
 		self.var_to_copy = var_to_copy
-		self.copy_from_site = copy_from_site
-		self.copy_to_site = copy_to_site
-		self.from_idx = X[X[self.site_var] == self.copy_from_site].index
-		self.to_idx = X[X[self.site_var] == self.copy_to_site].index
+		self.from_site = from_site
+		self.to_site = to_site
+		self.from_idx = X[X[self.site_var] == self.from_site].index
+		self.to_idx = X[X[self.site_var] == self.to_site].index
 		return self
 
 	def transform(self, X):
