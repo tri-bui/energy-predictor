@@ -13,9 +13,7 @@ class TimeConverter(BaseEstimator, TransformerMixin):
 	:param time_var: (string) name of datetime variable
 	"""
 
-	def __init__(self, timezones,
-	             site_var='site_id',
-	             time_var='timestamp'):
+	def __init__(self, timezones, site_var='site_id', time_var='timestamp'):
 		self.timezones = timezones
 		self.site_var = site_var
 		self.time_var = time_var
@@ -47,9 +45,7 @@ class TimeReindexer(BaseEstimator, TransformerMixin):
 				  last timestamp in new index
 	"""
 
-	def __init__(self,
-	             site_var='site_id',
-	             time_var='timestamp'):
+	def __init__(self, site_var='site_id', time_var='timestamp'):
 		# t_start and t_end are strings in the format 'YYYY-MM-DD hh:mm:ss'
 		self.site_var = site_var
 		self.time_var = time_var
@@ -57,10 +53,8 @@ class TimeReindexer(BaseEstimator, TransformerMixin):
 		self.t_start = None
 		self.t_end = None
 
-	def fit(self, X,
-	        t_start='2017-01-01 00:00:00',
-	        t_end='2018-12-31 23:00:00',
-	        y=None):
+	def fit(self, X, y=None, t_start='2017-01-01 00:00:00', 
+			t_end='2018-12-31 23:00:00'):
 		self.sites = X[self.site_var].unique()
 		self.t_start = t_start
 		self.t_end = t_end
@@ -90,8 +84,7 @@ class MissingImputer(BaseEstimator, TransformerMixin):
 	:param site_var: (string) name of site variable
 	"""
 
-	def __init__(self, cub_vars, lin_vars,
-	             site_var='site_id'):
+	def __init__(self, cub_vars, lin_vars, site_var='site_id'):
 		self.cub_vars = cub_vars
 		self.lin_vars = lin_vars
 		self.site_var = site_var
@@ -124,8 +117,7 @@ class DataCopier(BaseEstimator, TransformerMixin):
 	:param copy_to_site: (integer) site to copy data to
 	"""
 
-	def __init__(self,
-	             site_var='site_id'):
+	def __init__(self, site_var='site_id'):
 		self.site_var = site_var
 		self.var_to_copy = None
 		self.copy_from_site = None
@@ -133,11 +125,8 @@ class DataCopier(BaseEstimator, TransformerMixin):
 		self.from_idx = None
 		self.to_idx = None
 
-	def fit(self, X,
-	        var_to_copy='sea_level_pressure',
-	        copy_from_site=1,
-	        copy_to_site=5,
-	        y=None):
+	def fit(self, X, y=None, var_to_copy='sea_level_pressure', 
+			copy_from_site=1, copy_to_site=5):
 		self.var_to_copy = var_to_copy
 		self.copy_from_site = copy_from_site
 		self.copy_to_site = copy_to_site
@@ -152,8 +141,8 @@ class DataCopier(BaseEstimator, TransformerMixin):
 		return X
 
 
-def merge_data(meter_df, weather_df, building_df,
-               on_mb='building_id', on_mbw=['site_id', 'timestamp']):
+def merge_data(meter_df, weather_df, building_df, on_mb='building_id', 
+			   on_mbw=['site_id', 'timestamp']):
 
 	"""
 	Combine the meter, weather, and building data.
