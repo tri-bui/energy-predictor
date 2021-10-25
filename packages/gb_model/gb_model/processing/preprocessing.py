@@ -8,9 +8,14 @@ class TimeConverter(BaseEstimator, TransformerMixin):
 	"""
 	UTC-to-local timestamp converter.
 
-	:param timezones: (list of integers) timezone offsets
-	:param site_var: (string) name of site variable
-	:param time_var: (string) name of datetime variable
+	Parameters
+	----------
+	timezones : list[int]
+		Timezone offsets to convert UTC to local time
+	site_var : str, optional
+		Name of site variable, by default "site_id"
+	time_var : str, optional
+		Name of datetime variable, by default "timestamp"
 	"""
 
 	def __init__(self, timezones, site_var='site_id', time_var='timestamp'):
@@ -33,16 +38,24 @@ class TimeConverter(BaseEstimator, TransformerMixin):
 class TimeReindexer(BaseEstimator, TransformerMixin):
 
 	"""
-	Site and datetime reindexer to include a timestamp for every hour within
-	the time interval at every site.
+	Dataframe reindexer to include a timestamp for every hour within the time 
+	interval at every site.
 
-	:param site_var: (string) name of site variable
-	:param time_var: (string) name of datetime variable
+	Ex: 16 sites, 366 days => 16 x 366 x 24 timestamps
 
-	:param t_start: (datetime string in the format 'YYYY-MM-DD hh:mm:ss')
-					first timestamp in new index
-	:param t_end: (datetime string in the format 'YYYY-MM-DD hh:mm:ss')
-				  last timestamp in new index
+	Parameters
+	----------
+	site_var : str, optional
+		Name of site variable, by default "site_id"
+	time_var : str, optional
+		Name of datetime variable, by default "timestamp"
+
+	t_start : str, optional
+		First timestamp in new index with the format "YYYY-MM-DD hh:mm:ss", by 
+		default "2017-01-01 00:00:00"
+	t_end : str, optional
+		Last timestamp in new index with the format "YYYY-MM-DD hh:mm:ss", by 
+		default "2018-12-31 23:00:00"
 	"""
 
 	def __init__(self, site_var='site_id', time_var='timestamp'):
@@ -78,9 +91,14 @@ class MissingImputer(BaseEstimator, TransformerMixin):
 	"""
 	Missing value imputer using cubic and linear interpolation.
 
-	:param cub_vars: (list of strings) variable names for cubic interpolation
-	:param lin_vars: (list of strings) variable names for linear interpolation
-	:param site_var: (string) name of site variable
+	Parameters
+	----------
+	cub_vars : list[str]
+		Names of variables to perform cubic interpolation for
+	lin_vars : list[str]
+		Names of variables to perform linear interpolation for
+	site_var : str, optional
+		Name of site variable, by default "site_id"
 	"""
 
 	def __init__(self, cub_vars, lin_vars, site_var='site_id'):
@@ -106,14 +124,21 @@ class MissingImputer(BaseEstimator, TransformerMixin):
 class DataCopier(BaseEstimator, TransformerMixin):
 
 	"""
-	Data copier to a column from one site to another site. This is used to fill
-	missing data in sites with 100% missing values.
+	Data copier of a variable from one site to another site. This is used to 
+	fill missing data in sites with 100% missing values. The data being copied 
+	is coming from a site where the data is expected to be similar.
 
-	:param site_var: (string) name of site variable
+	Parameters
+	----------
+	site_var : str, optional
+		Name of site variable, by default "site_id"
 
-	:param var_to_copy: (string) name of variable to copy
-	:param from_site: (integer) site to copy data from
-	:param to_site: (integer) site to copy data to
+	var_to_copy : str, optional
+		Name of variable to copy data from, by default "sea_level_pressure"
+	from_site : int, optional
+		Site of data to copy from, by default 1
+	to_site : int, optional
+		Site of data to copy to, by default 5
 	"""
 
 	def __init__(self, site_var='site_id'):
@@ -144,17 +169,27 @@ def merge_data(meter_df, weather_df, building_df, on_mb='building_id',
 			   on_mbw=['site_id', 'timestamp']):
 
 	"""
-	Combine the meter, weather, and building data.
+	Merge the meter, weather, and building data.
 
-	:param meter_df: (Pandas dataframe) meter data
-	:param weather_df: (Pandas dataframe) weather data
-	:param building_df: (Pandas dataframe) building data
-	:param on_mb: (string or list of strings) variable name(s) to merge
-				  meter_df and building_df on
-	:param on_mbw: (string or list of strings) variable name(s) to merge the
-				   resulting dataframe and weather_df on
+	Parameters
+	----------
+	meter_df : pandas.core.frame.DataFrame
+		Meter data
+	weather_df : pandas.core.frame.DataFrame
+		Weather data
+	building_df : pandas.core.frame.DataFrame
+		Building data
+	on_mb : str or list[str], optional
+		Name(s) of variable(s) to merge meter and building data on, by default 
+		"building_id"
+	on_mbw : str or list[str], optional
+		Name(s) of variable(s) to merge resulting merged data and weather data 
+		on, by default ["site_id", "timestamp"]
 
-	:return: dataframe containing meter, weather, and building data
+	Returns
+	-------
+	pandas.core.frame.DataFrame
+		Merged data containing meter, weather, and building data
 	"""
 
 	meter = meter_df.copy()
