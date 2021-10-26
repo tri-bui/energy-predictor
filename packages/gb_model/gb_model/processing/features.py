@@ -16,9 +16,7 @@ class WeatherExtractor(BaseEstimator, TransformerMixin):
 	:param dew_var: (string) name of dew temperature variable
 	"""
 
-	def __init__(self,
-	             dir_var='wind_direction',
-	             air_var='air_temperature',
+	def __init__(self, dir_var='wind_direction', air_var='air_temperature',
 	             dew_var='dew_temperature'):
 		self.dir_var = dir_var
 		self.air_var = air_var
@@ -55,8 +53,7 @@ class TimeExtractor(BaseEstimator, TransformerMixin):
 	:param time_var: (string) name of datetime variable
 	"""
 
-	def __init__(self,
-	             time_var='timestamp'):
+	def __init__(self, time_var='timestamp'):
 		self.time_var = time_var
 
 	def fit(self, X, y=None):
@@ -82,9 +79,7 @@ class HolidayExtractor(BaseEstimator, TransformerMixin):
 	:param time_var: (string) name of datetime variable
 	"""
 
-	def __init__(self, countries,
-	             site_var='site_id',
-	             time_var='timestamp'):
+	def __init__(self, countries, site_var='site_id', time_var='timestamp'):
 		self.countries = countries
 		self.site_var = site_var
 		self.time_var = time_var
