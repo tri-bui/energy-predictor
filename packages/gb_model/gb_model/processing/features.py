@@ -64,7 +64,7 @@ class TimeExtractor(BaseEstimator, TransformerMixin):
 		X['dayofyear'] = X[self.time_var].dt.dayofyear
 		X['dayofweek'] = X[self.time_var].dt.dayofweek
 		X['hour'] = X[self.time_var].dt.hour
-		X['is_weekend'] = X.dayofweek.apply(lambda d: int(d in [5, 6]))
+		X['is_weekend'] = X['dayofweek'].apply(lambda d: int(d in [5, 6]))
 		return X
 
 
@@ -94,13 +94,13 @@ class HolidayExtractor(BaseEstimator, TransformerMixin):
 	def transform(self, X):
 		X = X.copy()
 		X['country'] = X[self.site_var].map(self.countries)
-		US = X[X.country == 'US'].copy()
+		US = X[X['country'] == 'US'].copy()
 		US['is_holiday'] = US[self.time_var].map(lambda d: int(d in self.USh))
-		CA = X[X.country == 'CA'].copy()
+		CA = X[X['country'] == 'CA'].copy()
 		CA['is_holiday'] = CA[self.time_var].map(lambda d: int(d in self.CAh))
-		UK = X[X.country == 'UK'].copy()
+		UK = X[X['country'] == 'UK'].copy()
 		UK['is_holiday'] = UK[self.time_var].map(lambda d: int(d in self.UKh))
-		IE = X[X.country == 'IE'].copy()
+		IE = X[X['country'] == 'IE'].copy()
 		IE['is_holiday'] = IE[self.time_var].map(lambda d: int(d in self.IEh))
 		X = pd.concat([US, CA, UK, IE]).sort_index()
 		return X
