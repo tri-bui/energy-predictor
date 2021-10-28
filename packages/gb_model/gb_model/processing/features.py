@@ -83,12 +83,16 @@ class HolidayExtractor(BaseEstimator, TransformerMixin):
 		self.countries = countries
 		self.site_var = site_var
 		self.time_var = time_var
+		self.USh = None
+		self.CAh = None
+		self.UKh = None
+		self.IEh = None
+
+	def fit(self, X, y=None):
 		self.USh = holidays.UnitedStates()
 		self.CAh = holidays.Canada()
 		self.UKh = holidays.UnitedKingdom()
 		self.IEh = holidays.Ireland()
-
-	def fit(self, X, y=None):
 		return self
 
 	def transform(self, X):
