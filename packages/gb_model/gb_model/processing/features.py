@@ -7,13 +7,20 @@ from sklearn.base import BaseEstimator, TransformerMixin
 class WeatherExtractor(BaseEstimator, TransformerMixin):
 
 	"""
-	Feature extractor for weather-related variables. This is used to create a
-	new feature for relative humidity and to convert compass direction into
-	x- and y- components.
+	Feature extractor for weather-related variables. This is used to:
+	1. create a new feature for relative humidity using the air temperature and 
+	   dew temperature
+	2. convert wind direction (which is in compass direction) into x- and y- 
+	   components
 
-	:param dir_var: (string) name of direction variable
-	:param air_var: (string) name of air temperature variable
-	:param dew_var: (string) name of dew temperature variable
+	Parameters
+	----------
+	dir_var : str, optional
+		Name of wind direction variable, by default "wind_direction"
+	air_var : str, optional
+		Name of air temperature variable, by default "air_temperature"
+	dew_var : str, optional
+		Name of dew temperature variable, by default "dew_temperature"
 	"""
 
 	def __init__(self, dir_var='wind_direction', air_var='air_temperature',
