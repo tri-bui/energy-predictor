@@ -53,11 +53,17 @@ class WeatherExtractor(BaseEstimator, TransformerMixin):
 class TimeExtractor(BaseEstimator, TransformerMixin):
 
 	"""
-	Feature extractor for the datetime variable. This is used to extract
-	day of year, day of week, and hour of day components from timestamps as
-	well as a weekend boolean feature.
+	Feature extractor for the datetime variables. This is used to extract the 
+	following datetime components from a timestamp:
+	1. day of year
+	2. day of week
+	3. hour of day
+	4. weekend indicator
 
-	:param time_var: (string) name of datetime variable
+	Parameters
+	----------
+	time_var : str, optional
+		Name of timestamp variable, by default "timestamp"
 	"""
 
 	def __init__(self, time_var='timestamp'):
