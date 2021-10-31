@@ -84,12 +84,19 @@ class TimeExtractor(BaseEstimator, TransformerMixin):
 class HolidayExtractor(BaseEstimator, TransformerMixin):
 
 	"""
-	Feature extractor for site-specific features. This is used to create
-	country string and holiday boolean features.
+	Feature extractor for site-specific features. This is used to create the 
+	followingn features:
+	1. country (2-letter code)
+	2. holiday indicator based on date and country
 
-	:param countries: (dictionary) mapping of site to country
-	:param site_var: (string) name of site variable
-	:param time_var: (string) name of datetime variable
+	Parameters
+	----------
+	countries : dict{str: str}
+		Mapping of site number to 2-letter country code
+	site_var : str, optional
+		Name of site variable, by default "site_id"
+	time_var : str, optional
+		Name of timestamp variable, by default "timestamp"
 	"""
 
 	def __init__(self, countries, site_var='site_id', time_var='timestamp'):
@@ -126,9 +133,12 @@ class HolidayExtractor(BaseEstimator, TransformerMixin):
 class FeatSelector(BaseEstimator, TransformerMixin):
 
 	"""
-	Feature selector.
+	Feature filterer.
 
-	:param feats: (list of strings) features
+	Parameters
+	----------
+	feats : list[str]
+		Features to keep
 	"""
 
 	def __init__(self, feats):
