@@ -4,8 +4,7 @@ import pandas as pd
 # import xgboost as xgb
 
 
-def split(df,
-          meter_var='meter'):
+def split(df, meter_var='meter'):
 
 	"""
 	Split data by meter type.
@@ -94,9 +93,7 @@ def inverse_transform(df, sqft_var='square_feet', target_var='meter_reading'):
 	return df
 
 
-def convert_site0_units(df,
-                        site_var='site_id',
-                        meter_var='meter',
+def convert_site0_units(df, site_var='site_id', meter_var='meter',
                         target_var='meter_reading'):
 
 	"""
