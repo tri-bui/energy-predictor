@@ -16,7 +16,7 @@ def split(df, meter_var='meter'):
 	"""
 
 	df = df.copy()
-	dfs = []
+	dfs = list()
 	for m in range(4):
 		dfm = df[df[meter_var] == m].drop(meter_var, axis=1)
 		dfs.append(dfm)
@@ -89,7 +89,7 @@ def inverse_transform(df, sqft_var='square_feet', target_var='meter_reading'):
 
 	df = df.copy()
 	df[target_var] = np.expm1(df[target_var])
-	df[target_var] *= df[sqft_var] / df[sqft_var].mean()
+	# df[target_var] *= df[sqft_var] / df[sqft_var].mean()
 	return df
 
 
