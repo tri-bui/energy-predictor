@@ -74,7 +74,8 @@ def predict(df, model=None, model_path=None, use_xgb=False):
 	return pred
 
 
-def inverse_transform(df, sqft_var='square_feet', target_var='meter_reading'):
+def inverse_transform(df, stdize_sqft=False, sqft_var='square_feet', 
+					  target_var='meter_reading'):
 
 	"""
 	Inverse transform predictions. The target variable in the training data
@@ -89,7 +90,8 @@ def inverse_transform(df, sqft_var='square_feet', target_var='meter_reading'):
 
 	df = df.copy()
 	df[target_var] = np.expm1(df[target_var])
-	# df[target_var] *= df[sqft_var] / df[sqft_var].mean()
+	if stdize_sqft:
+		df[target_var] *= df[sqft_var] / df[sqft_var].mean()
 	return df
 
 
