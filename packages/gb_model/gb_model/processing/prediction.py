@@ -9,10 +9,17 @@ def split(df, meter_var='meter'):
 	"""
 	Split data by meter type.
 
-	:param df: (Pandas dataframe) full data
-	:param meter_var: (string) name of meter type variable
+	Parameters
+	----------
+	df : pandas.core.frame.DataFrame
+		Full dataset including meter, weather, and building data
+	meter_var : str, optional
+		Name of meter type variable, by default 'meter'
 
-	:return: list of dataframes split by meter type
+	Returns
+	-------
+	List[pandas.core.frame.DataFrame]
+		Dataframe for each meter type
 	"""
 
 	df = df.copy()
