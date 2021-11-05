@@ -18,7 +18,7 @@ def split(df, meter_var='meter'):
 
 	Returns
 	-------
-	List[pandas.core.frame.DataFrame]
+	list[pandas.core.frame.DataFrame]
 		Dataframe for each meter type
 	"""
 
