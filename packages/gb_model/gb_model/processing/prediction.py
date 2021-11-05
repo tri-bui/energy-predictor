@@ -67,17 +67,27 @@ def transform(df, rare_enc, mean_enc, scaler):
 
 
 def predict(df, model=None, model_path=None, use_xgb=False):
-
+	
 	"""
-	Make predictions using a trained model.
+	Make predictions using a trained model. Pass in either a trained model or 
+	the path to a trained model. If both are passed in, `model_path` has 
+	priority.
 
-	:param df: (Pandas dataframe) data with features matching
-			   training data
-	:param model_path: (Model object) trained model
-	:param model_path: (string) path to trained model
-	:param use_xgb: (boolean) whether or not to predict using a XGBoost model
+	Parameters
+	----------
+	df : pandas.core.frame.DataFrame
+		Data with features matching the training data
+	model : [type], optional
+		Trained model, by default None
+	model_path : [type], optional
+		Path to trained model, by default None
+	use_xgb : bool, optional
+		Whether the model is an XGBoost model, by default False
 
-	:return: non-negative predictions
+	Returns
+	-------
+	numpy.ndarray[float]
+		Non-negative predictions
 	"""
 
 	df = df.copy()
