@@ -33,19 +33,29 @@ def split(df, meter_var='meter'):
 def transform(df, rare_enc, mean_enc, scaler):
 
 	"""
-	Transform data using rare label categorical encoding, mean
-	categorical encoding, and standard scaling. Features will be
-	selected on this resulting data.
+	Transform data using:
+	1. rare label categorical encoding - group rare categories into a single 
+	label
+	2. target-mean categorical encoding - numerically encode categories with 
+	the mean target label (i.e. meter reading) of their corresponding group
+	3. standard scaling - scale each feature to have a mean of 0 and standard 
+	deviation of 1
 
-	:param df: (Pandas dataframe) data with variables to be selected
-	:param rare_enc: (Feature-engine categorical encoder object)
-					 fitted rare label categorical encoder
-	:param mean_enc: (Feature-engine categorical encoder object)
-					 fitted mean categorical encoder
-	:param scaler: (Scikit-learn preprocessing object)
-				   fitted standard scaler
+	Parameters
+	----------
+	df : pandas.core.frame.DataFrame
+		Dataset with selected variables
+	rare_enc : feature_engine.encoding.RareLabelEncoder
+		Fitted rare label categorical encoder
+	mean_enc : feature_engine.encoding.MeanEncoder
+		Fitted target-mean categorical encoder
+	scaler : sklearn.preprocessing.StandardScaler
+		Fitted standard scaler
 
-	:return: transformed dataframe with selected features
+	Returns
+	-------
+	pandas.core.frame.DataFrame
+		Transformed data with selected features
 	"""
 
 	df = df.copy()
