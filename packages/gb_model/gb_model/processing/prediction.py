@@ -45,11 +45,11 @@ def transform(df, rare_enc, mean_enc, scaler):
 	----------
 	df : pandas.core.frame.DataFrame
 		Dataset with selected variables
-	rare_enc : feature_engine.encoding.RareLabelEncoder
+	rare_enc : feature_engine.encoding.rare_label.RareLabelEncoder
 		Fitted rare label categorical encoder
-	mean_enc : feature_engine.encoding.MeanEncoder
+	mean_enc : feature_engine.encoding.mean_encoding.MeanEncoder
 		Fitted target-mean categorical encoder
-	scaler : sklearn.preprocessing.StandardScaler
+	scaler : sklearn.preprocessing._data.StandardScaler
 		Fitted standard scaler
 
 	Returns
