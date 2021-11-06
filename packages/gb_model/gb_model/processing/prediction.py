@@ -106,13 +106,26 @@ def inverse_transform(df, stdize_sqft=False, sqft_var='square_feet',
 
 	"""
 	Inverse transform predictions. The target variable in the training data
-	was standardized using the square_feet variable and then log-transformed.
+	was optionally standardized using the square_feet variable and then 
+	log-transformed, so the inverse transformations on predictions will occur 
+	in reverse order.
 
-	:param df: (Pandas dataframe) data with square footage and target variables
-	:param sqft_var: (String) name of square footage variable
-	:param target_var: (String) name of target variable
+	Parameters
+	----------
+	df : pandas.core.frame.DataFrame
+		Data with square footage annd target variables
+	stdize_sqft : bool, optional
+		Whether the target variable was standardized by the building's square 
+		footage before trainning, by default False
+	sqft_var : str, optional
+		Name of square footage variable, by default 'square_feet'
+	target_var : str, optional
+		Name of target variable, by default 'meter_reading'
 
-	:return: inverse-transformed dataframe
+	Returns
+	-------
+	pandas.core.frame.DataFrame
+		Data with inverse-transformed predictions
 	"""
 
 	df = df.copy()
