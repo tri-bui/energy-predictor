@@ -1,7 +1,6 @@
 import joblib
 import pandas as pd
 from sklearn.pipeline import Pipeline
-
 from gb_model.config import config as cfg
 from gb_model.processing import preprocessing as ppg
 from gb_model.processing import features as fts
@@ -13,7 +12,8 @@ wthr_pipe = Pipeline(
 	[
 		('time_converter', ppg.TimeConverter(timezones=cfg.TZ_OFFSETS)),
 		('time_reindexer', ppg.TimeReindexer()),
-		('missing_imputer', ppg.MissingImputer(cub_vars=cfg.CUB_VARS, lin_vars=cfg.LIN_VARS)),
+		('missing_imputer', ppg.MissingImputer(cub_vars=cfg.CUB_VARS, 
+											   lin_vars=cfg.LIN_VARS)),
 		('data_copier', ppg.DataCopier())
 	]
 )
@@ -40,8 +40,10 @@ def pred_pipe(df, rare_path, mean_path, sclr_path, model_path,
 	Make predictions using LightGBM or XGBoost.
 
 	:param df: (Pandas dataframe) preprocessed data with listed variables
-	:param rare_path: (pathlib Path object) path to trained rare label categorical encoders
-	:param mean_path: (pathlib Path object) path to trained mean categorical encoders
+	:param rare_path: (pathlib Path object) path to trained rare label 
+					  categorical encoders
+	:param mean_path: (pathlib Path object) path to trained mean categorical 
+					  encoders
 	:param sclr_path: (pathlib Path object) path to trained standard scalers
 	:param model_path: (pathlib Path object) path to trained LightGBM models
 	:param use_xgb: (boolean) whether or not to predict using a XGBoost model
@@ -67,7 +69,8 @@ def pred_pipe(df, rare_path, mean_path, sclr_path, model_path,
 		X = pdn.transform(df_list[i], re, me, ss)
 
 		y_pred = pdn.predict(X, model=model, use_xgb=use_xgb)
-		# y_pred = pdn.predict(X, model_path=(model_path / f'lgb{str(i)}.pkl'), use_xgb=use_xgb)
+		# y_pred = pdn.predict(X, model_path=(model_path / f'lgb{str(i)}.pkl'), 
+		# 					   use_xgb=use_xgb)
 		y = df_list[i][[sqft_var]].copy()
 		y[target_var] = y_pred
 		y = pdn.inverse_transform(y)
