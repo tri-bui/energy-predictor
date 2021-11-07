@@ -14,7 +14,7 @@ def split(df, meter_var='meter'):
 	df : pandas.core.frame.DataFrame
 		Full dataset including meter, weather, and building data
 	meter_var : str, optional
-		Name of meter type variable, by default 'meter'
+		Name of meter type variable, by default "meter"
 
 	Returns
 	-------
@@ -118,9 +118,9 @@ def inverse_transform(df, stdize_sqft=False, sqft_var='square_feet',
 		Whether the target variable was standardized by the building's square 
 		footage before trainning, by default False
 	sqft_var : str, optional
-		Name of square footage variable, by default 'square_feet'
+		Name of square footage variable, by default "square_feet"
 	target_var : str, optional
-		Name of target variable, by default 'meter_reading'
+		Name of target variable, by default "meter_reading"
 
 	Returns
 	-------
@@ -150,11 +150,11 @@ def convert_site0_units(df, site_var='site_id', meter_var='meter',
 	df : pandas.core.frame.DataFrame
 		Data with site, meter, and target variables
 	site_var : str, optional
-		Name of site variable, by default 'site_id'
+		Name of site variable, by default "site_id"
 	meter_var : str, optional
-		Name of meter type variable, by default 'meter'
+		Name of meter type variable, by default "meter"
 	target_var : str, optional
-		Name of target variable, by default 'meter_reading'
+		Name of target variable, by default "meter_reading"
 
 	Returns
 	-------
