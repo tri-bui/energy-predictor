@@ -143,14 +143,24 @@ def convert_site0_units(df, site_var='site_id', meter_var='meter',
 	readings from tons back to kBTU. Site 0 meter readings in the training data
 	were recorded in kBTU, but the model was trained on units kWh and tons for
 	meter 0 and meter 1 respectively. This function is only used for the Kaggle
-	submission, as site 0 units were not in kWh.
+	submission, as site 0 units were not consistent.
 
-	:param df: (Pandas dataframe) data with site, meter, and target variables
-	:param site_var: (String) name of site variable
-	:param meter_var: (String) name of meter type variable
-	:param target_var: (String) name of target variable
+	Parameters
+	----------
+	df : pandas.core.frame.DataFrame
+		Data with site, meter, and target variables
+	site_var : str, optional
+		Name of site variable, by default 'site_id'
+	meter_var : str, optional
+		Name of meter type variable, by default 'meter'
+	target_var : str, optional
+		Name of target variable, by default 'meter_reading'
 
-	:return: dataframe with units in site 0 converted
+	Returns
+	-------
+	pandas.core.frame.DataFrame
+		Data with units of meters 0 and 1 in site 0 converted back to their 
+		original units
 	"""
 
 	df = df.copy()
