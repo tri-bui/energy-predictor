@@ -113,7 +113,7 @@ def inverse_transform(df, stdize_sqft=False, sqft_var='square_feet',
 	Parameters
 	----------
 	df : pandas.core.frame.DataFrame
-		Data with square footage annd target variables
+		Data with square footage and target variables
 	stdize_sqft : bool, optional
 		Whether the target variable was standardized by the building's square 
 		footage before trainning, by default False
