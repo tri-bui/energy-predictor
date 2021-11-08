@@ -31,10 +31,8 @@ feat_pipe = Pipeline(
 
 
 # Prediction
-def pred_pipe(df, rare_path, mean_path, sclr_path, model_path,
-               use_xgb=True,
-               sqft_var='square_feet',
-               target_var='meter_reading'):
+def pred_pipe(df, rare_path, mean_path, sclr_path, model_path, use_xgb=True,
+        	  sqft_var='square_feet', target_var='meter_reading'):
 
 	"""
 	Make predictions using LightGBM or XGBoost.
