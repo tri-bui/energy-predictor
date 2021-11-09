@@ -31,18 +31,19 @@ feat_pipe = Pipeline(
 
 
 # Prediction
-def pred_pipe(df, rare_path, mean_path, sclr_path, model_path, use_xgb=True,
-        	  sqft_var='square_feet', target_var='meter_reading'):
+def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path, 
+			  model_path, use_xgb=True, sqft_var='square_feet', 
+			  target_var='meter_reading'):
 
 	"""
 	Make predictions using LightGBM or XGBoost.
 
 	:param df: (Pandas dataframe) preprocessed data with listed variables
-	:param rare_path: (pathlib Path object) path to trained rare label 
-					  categorical encoders
-	:param mean_path: (pathlib Path object) path to trained mean categorical 
-					  encoders
-	:param sclr_path: (pathlib Path object) path to trained standard scalers
+	:param rare_encoder_path: (pathlib Path object) path to trained rare label 
+							  categorical encoders
+	:param mean_encoder_path: (pathlib Path object) path to trained mean 
+							  categorical encoders
+	:param scaler_path: (pathlib Path object) path to trained standard scalers
 	:param model_path: (pathlib Path object) path to trained LightGBM models
 	:param use_xgb: (boolean) whether or not to predict using a XGBoost model
 	:param sqft_var: (String) name of square footage variable
@@ -61,9 +62,9 @@ def pred_pipe(df, rare_path, mean_path, sclr_path, model_path, use_xgb=True,
 	preds = []
 
 	for i in range(4):
-		re = joblib.load(rare_path / f'rare_enc{str(i)}.pkl')
-		me = joblib.load(mean_path / f'mean_enc{str(i)}.pkl')
-		ss = joblib.load(sclr_path / f'scaler{str(i)}.pkl')
+		re = joblib.load(rare_encoder_path / f'rare_enc{str(i)}.pkl')
+		me = joblib.load(mean_encoder_path / f'mean_enc{str(i)}.pkl')
+		ss = joblib.load(scaler_path / f'scaler{str(i)}.pkl')
 		X = pdn.transform(df_list[i], re, me, ss)
 
 		y_pred = pdn.predict(X, model=model, use_xgb=use_xgb)
