@@ -52,14 +52,13 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	:return: predictions in a list
 	"""
 
-	df = df.copy()
-	df.reset_index(inplace=True)
+	df = df.reset_index().copy()
 	# tmp = df[['index', 'site_id', 'meter']].copy()
 	df.drop(['index', 'site_id'], axis=1, inplace=True)
+	df_list = pdn.split(df)
 
 	model = joblib.load(model_path / 'lgb0.pkl')
-	df_list = pdn.split(df)
-	preds = []
+	preds = list()
 
 	for i in range(4):
 		re = joblib.load(rare_encoder_path / f'rare_enc{str(i)}.pkl')
