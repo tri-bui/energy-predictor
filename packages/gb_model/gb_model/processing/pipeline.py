@@ -61,13 +61,13 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	preds = list()
 
 	for i in range(4):
-		re = joblib.load(rare_encoder_path / f'rare_enc{str(i)}.pkl')
-		me = joblib.load(mean_encoder_path / f'mean_enc{str(i)}.pkl')
-		ss = joblib.load(scaler_path / f'scaler{str(i)}.pkl')
+		re = joblib.load(rare_encoder_path / f'rare_enc{i}.pkl')
+		me = joblib.load(mean_encoder_path / f'mean_enc{i}.pkl')
+		ss = joblib.load(scaler_path / f'scaler{i}.pkl')
 		X = pdn.transform(df_list[i], re, me, ss)
 
 		y_pred = pdn.predict(X, model=model, use_xgb=use_xgb)
-		# y_pred = pdn.predict(X, model_path=(model_path / f'lgb{str(i)}.pkl'), 
+		# y_pred = pdn.predict(X, model_path=(model_path / f'lgb{i}.pkl'), 
 		# 					   use_xgb=use_xgb)
 		y = df_list[i][[sqft_var]].copy()
 		y[target_var] = y_pred
