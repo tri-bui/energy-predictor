@@ -36,20 +36,22 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 			  target_var='meter_reading'):
 
 	"""
-	Make predictions using LightGBM or XGBoost.
+	Make predictions using a trained LightGBM or XGBoost model.
 
-	:param df: (Pandas dataframe) preprocessed data with listed variables
-	:param rare_encoder_path: (pathlib Path object) path to trained rare label 
-							  categorical encoders
-	:param mean_encoder_path: (pathlib Path object) path to trained mean 
-							  categorical encoders
-	:param scaler_path: (pathlib Path object) path to trained standard scalers
-	:param model_path: (pathlib Path object) path to trained LightGBM models
-	:param use_xgb: (boolean) whether or not to predict using a XGBoost model
-	:param sqft_var: (String) name of square footage variable
-	:param target_var: (String) name of target variable
+	:param df: (pandas.core.frame.DataFrame) preprocessed data
+	:param rare_encoder_path: (str) path to directory containing fitted rare 
+							  label categorical encoders
+	:param mean_encoder_path: (str) path to directory containing fitted 
+							  target-mean categorical encoders
+	:param scaler_path: (str) path to directory containing fitted standard 
+						scalers
+	:param model_path: (str) path to directory containing trained LightGBM 
+					   models
+	:param use_xgb: (bool) whether to use an XGBoost model to make predictions
+	:param sqft_var: (str) name of square footage variable
+	:param target_var: (str) name of target variable
 
-	:return: predictions in a list
+	:return: (list[float]) Predictions
 	"""
 
 	df = df.reset_index().copy()
