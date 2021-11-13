@@ -30,13 +30,13 @@ feat_pipe = Pipeline(
 )
 
 
-# Prediction
 def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path, 
 			  model_path, use_xgb=True, sqft_var='square_feet', 
 			  target_var='meter_reading'):
 
 	"""
-	Make predictions using a trained LightGBM or XGBoost model.
+	Transform data and make predictions using a trained LightGBM or XGBoost 
+	model.
 
 	:param df: (pandas.core.frame.DataFrame) preprocessed data
 	:param rare_encoder_path: (str) path to directory containing fitted rare 
