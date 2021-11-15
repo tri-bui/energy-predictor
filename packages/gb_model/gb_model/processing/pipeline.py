@@ -52,6 +52,12 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	:param target_var: (str) name of target variable
 
 	:return: (list[float]) Predictions
+
+	TODO:
+	1) Add if condition for using lgb0 for all meter types
+	2) Add if condition for using lgb or xgb 
+	3) Add if condition for transforming site 0 units back to original units
+	4) Update docstring to np style
 	"""
 
 	# Data
