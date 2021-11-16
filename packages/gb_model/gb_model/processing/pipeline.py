@@ -31,8 +31,8 @@ feat_pipe = Pipeline(
 
 
 def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path, 
-			  model_path, use_xgb=True, sqft_var='square_feet', 
-			  target_var='meter_reading'):
+			  model_path, use_model0=True, use_xgb=True, 
+			  sqft_var='square_feet', target_var='meter_reading'):
 
 	"""
 	Transform data and make predictions using a trained LightGBM or XGBoost 
@@ -47,6 +47,8 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 						scalers
 	:param model_path: (str) path to directory containing trained LightGBM 
 					   models
+	:param use_model0: (bool) whether to use model 0 (electricity) for all 
+					   predictions or to use each meter's model separately
 	:param use_xgb: (bool) whether to use an XGBoost model to make predictions
 	:param sqft_var: (str) name of square footage variable
 	:param target_var: (str) name of target variable
@@ -79,10 +81,15 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 		ss = joblib.load(scaler_path / f'scaler{i}.pkl')
 		X = pdn.transform(df_list[i], re, me, ss)
 
-		# Make preds
+		# Model path
 		y_pred = pdn.predict(X, model=model, use_xgb=use_xgb)
-		# y_pred = pdn.predict(X, model_path=(model_path / f'lgb{i}.pkl'), 
-		# 					   use_xgb=use_xgb)
+		if use_model0:
+			model_path = (model_path / 'lgb0.pkl')
+		else:
+			model_path = (model_path / f'lgb{i}.pkl')
+
+		# Make preds
+		y_pred = pdn.predict(X, model_path=model_path, use_xgb=use_xgb)
 		y = df_list[i][[sqft_var]].copy()
 		y[target_var] = y_pred
 		y = pdn.inverse_transform(y)
