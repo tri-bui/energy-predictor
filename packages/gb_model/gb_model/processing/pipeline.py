@@ -56,10 +56,9 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	:return: (list[float]) Predictions
 
 	TODO:
-	1) Add if condition for using lgb0 for all meter types
-	2) Add if condition for using lgb or xgb 
-	3) Add if condition for transforming site 0 units back to original units
-	4) Update docstring to np style
+	1) Add if condition for using lgb or xgb 
+	2) Add if condition for transforming site 0 units back to original units
+	3) Update docstring to np style
 	"""
 
 	# Data
@@ -79,7 +78,6 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 		X = pdn.transform(df_list[i], re, me, ss)
 
 		# Model path
-		y_pred = pdn.predict(X, model=model, use_xgb=use_xgb)
 		if use_model0:
 			model_path = (model_path / 'lgb0.pkl')
 		else:
