@@ -69,9 +69,6 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	df_list = pdn.split(df)
 	preds = list()
 
-	# Trained model
-	model = joblib.load(model_path / 'lgb0.pkl')
-
 	# Transform data and make preds
 	for i in range(4):
 
