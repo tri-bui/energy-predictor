@@ -90,9 +90,13 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 
 		# Make preds
 		y_pred = pdn.predict(X, model_path=model_path, use_xgb=use_xgb)
+
+		# Inverse transform preds
 		y = df_list[i][[sqft_var]].copy()
 		y[target_var] = y_pred
 		y = pdn.inverse_transform(y)
+
+		# Store preds
 		preds.append(y)
 
 	# Format preds
