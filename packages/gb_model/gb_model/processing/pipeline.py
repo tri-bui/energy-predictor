@@ -32,7 +32,8 @@ feat_pipe = Pipeline(
 
 def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path, 
 			  model_path, use_model0=True, use_xgb=True, 
-			  sqft_var='square_feet', target_var='meter_reading'):
+			  inverse_transform_site0=False, sqft_var='square_feet', 
+			  target_var='meter_reading'):
 
 	"""
 	Transform data and make predictions using a trained LightGBM or XGBoost 
@@ -50,19 +51,21 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	:param use_model0: (bool) whether to use model 0 (electricity) for all 
 					   predictions or to use each meter's model separately
 	:param use_xgb: (bool) whether to use an XGBoost model to make predictions
+	:param inverse_transform_site0: (bool) whether to convert site 0 units 
+									back to original units after making 
+									predictions
 	:param sqft_var: (str) name of square footage variable
 	:param target_var: (str) name of target variable
 
 	:return: (list[float]) Predictions
 
 	TODO:
-	1) Add if condition for transforming site 0 units back to original units
-	2) Update docstring to np style
+	1) Update docstring to np style
 	"""
 
 	# Data
 	df = df.reset_index().copy()
-	# tmp = df[['index', 'site_id', 'meter']].copy()
+	tmp = df[['index', 'site_id', 'meter']].copy()
 	df.drop(['index', 'site_id'], axis=1, inplace=True)
 	df_list = pdn.split(df)
 
@@ -98,7 +101,8 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 
 	# Format preds
 	pred = pd.concat(preds).sort_index().reset_index()
-	# pred = pd.merge(tmp, pred, on='index', how='left')
-	# pred = pdn.convert_site0_units(pred)
+	if inverse_transform_site0:
+		pred = pd.merge(tmp, pred, on='index', how='left')
+		pred = pdn.convert_site0_units(pred)
 	pred = pred[target_var].tolist()
 	return pred
