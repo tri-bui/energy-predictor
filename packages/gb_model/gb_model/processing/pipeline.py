@@ -51,9 +51,8 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	:param use_model0: (bool) whether to use model 0 (electricity) for all 
 					   predictions or to use each meter's model separately
 	:param use_xgb: (bool) whether to use an XGBoost model to make predictions
-	:param inverse_transform_site0: (bool) whether to convert site 0 units 
-									back to original units after making 
-									predictions
+	:param inverse_transform_site0: (bool) whether to convert site 0 
+									predictions back to original units
 	:param sqft_var: (str) name of square footage variable
 	:param target_var: (str) name of target variable
 
