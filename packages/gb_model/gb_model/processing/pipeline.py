@@ -31,7 +31,7 @@ feat_pipe = Pipeline(
 
 
 def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path, 
-			  model_path, use_model0=True, use_xgb=True, 
+			  model_path, use_model0=True, use_xgb=False, 
 			  inverse_transform_site0=False, sqft_var='square_feet', 
 			  target_var='meter_reading'):
 
@@ -39,27 +39,35 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 	Transform data and make predictions using a trained LightGBM or XGBoost 
 	model.
 
-	:param df: (pandas.core.frame.DataFrame) preprocessed data
-	:param rare_encoder_path: (str) path to directory containing fitted rare 
-							  label categorical encoders
-	:param mean_encoder_path: (str) path to directory containing fitted 
-							  target-mean categorical encoders
-	:param scaler_path: (str) path to directory containing fitted standard 
-						scalers
-	:param model_path: (str) path to directory containing trained LightGBM 
-					   models
-	:param use_model0: (bool) whether to use model 0 (electricity) for all 
-					   predictions or to use each meter's model separately
-	:param use_xgb: (bool) whether to use an XGBoost model to make predictions
-	:param inverse_transform_site0: (bool) whether to convert site 0 
-									predictions back to original units
-	:param sqft_var: (str) name of square footage variable
-	:param target_var: (str) name of target variable
+	Parameters
+	----------
+	df : pandas.core.frame.DataFrame
+		Preprocessed data
+	rare_encoder_path : str
+		Path to directory containing rare label categorical encoders
+	mean_encoder_path : str
+		Path to directory containing target-mean categorical encoders
+	scaler_path : str
+		Path to directory containing standard scalers
+	model_path : str
+		Path to directory containing trained models
+	use_model0 : bool, optional
+		Whether to use model 0 (electricity) for all predictions or to use each 
+		meter's model separately, by default True
+	use_xgb : bool, optional
+		Whether to use an XGBoost model to make predictions, by default False
+	inverse_transform_site0 : bool, optional
+		Whether to convert site 0 predictions back to original units, by 
+		default False
+	sqft_var : str, optional
+		Name of square footage variable, by default 'square_feet'
+	target_var : str, optional
+		Name of target variable, by default 'meter_reading'
 
-	:return: (list[float]) Predictions
-
-	TODO:
-	1) Update docstring to np style
+	Returns
+	-------
+	list[float]
+		Meter reading predictions
 	"""
 
 	# Data
