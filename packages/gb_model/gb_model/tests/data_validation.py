@@ -40,17 +40,17 @@ def validate_weather_vals(weather_df):
            weather_df['site_id'].max() <= 15, 'Bad site_id value.'
     assert weather_df['air_temperature'].min() >= -95 and \
            weather_df['air_temperature'].max() <= 95, \
-        'Bad air_temperature value.'
+           'Bad air_temperature value.'
     assert weather_df['dew_temperature'].min() >= -95 and \
            weather_df['dew_temperature'].max() <= 95, \
-        'Bad dew_temperature value.'
+           'Bad dew_temperature value.'
     assert weather_df['sea_level_pressure'].min() >= 800 and \
            weather_df['sea_level_pressure'].max() <= 1100, \
-        'Bad sea_level_pressure value.'
+           'Bad sea_level_pressure value.'
     assert weather_df['wind_speed'].min() >= 0, 'Bad wind_speed value.'
     assert weather_df['wind_direction'].min() >= 0 and \
            weather_df['wind_direction'].max() <= 360, \
-        'Bad wind_direction value.'
+           'Bad wind_direction value.'
 
 
 def validate_data(meter_df, weather_df, meter_cols, weather_cols):
