@@ -1,12 +1,16 @@
 def validate_cols(df, cols):
-    """
-	Check if input data has the required columns and that the column does not
-	have the "object" type.
 
-	:param df: (Pandas dataframe) input data
-	:param cols: (list) required columns
-	:return: None
-	"""
+    """
+    Check if the input data has the required columns and that there are no 
+    columns of "object" type.
+
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame
+        Input data
+    cols : list[str]
+        Required columns
+    """
 
     for col in cols:
         assert col in df.columns, f'Missing {col} column.'
