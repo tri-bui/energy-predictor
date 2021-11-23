@@ -19,12 +19,18 @@ def validate_cols(df, cols):
 
 
 def validate_meter_vals(meter_df):
-    """
-	Check for bad values in the input meter data.
 
-	:param meter_df: (Pandas dataframe) input meter data
-	:return: None
-	"""
+    """
+	Check for bad values in the input meter data. A value is bad if it is out 
+    of range for that particular feature. The meter ranges are:
+    - `building_id` - between 0 and 1448
+    - `meter` - between 0 and 3
+
+    Parameters
+    ----------
+    meter_df : pandas.core.frame.DataFrame
+        Input meter data
+    """
 
     assert meter_df['building_id'].min() >= 0 and \
            meter_df['building_id'].max() <= 1448, 'Bad building_id value.'
