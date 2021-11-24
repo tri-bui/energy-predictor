@@ -22,7 +22,7 @@ def validate_meter_vals(meter_df):
 
     """
 	Check for bad values in the input meter data. A value is bad if it is out 
-    of range for that particular feature. The meter ranges are:
+    of range for that particular feature. The meter feature ranges are:
     - `building_id` - between 0 and 1448
     - `meter` - between 0 and 3
 
@@ -39,12 +39,22 @@ def validate_meter_vals(meter_df):
 
 
 def validate_weather_vals(weather_df):
-    """
-	Check for bad values in the input weather data.
 
-	:param weather_df: (Pandas dataframe) input weather data
-	:return: None
-	"""
+    """
+	Check for bad values in the input weather data. A value is bad if it is out 
+    of range for that particular features. The weather feature ranges are:
+    - `site_id` - between 0 and 15
+    - `air_temperature` - between -95 and 95
+    - `dew_temperature` - between -95 and 95
+    - `sea_level_pressure` - between 800 and 1100
+    - `wind_speed` - non-negative
+    - `wind_direction` - between 0 and 360
+
+    Parameters
+    ----------
+    weather_df : pandas.core.frame.DataFrame
+        Input weather data
+    """
 
     assert weather_df['site_id'].min() >= 0 and \
            weather_df['site_id'].max() <= 15, 'Bad site_id value.'
