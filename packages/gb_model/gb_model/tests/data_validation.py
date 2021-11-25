@@ -74,6 +74,22 @@ def validate_weather_vals(weather_df):
 
 
 def validate_data(meter_df, weather_df, meter_cols, weather_cols):
+
+    """
+    Validate input meter and weather data.
+
+    Parameters
+    ----------
+    meter_df : pandas.core.frame.DataFrame
+        Input meter data
+    weather_df : pandas.core.frame.DataFrame
+        Input weather data
+    meter_cols : list[str]
+        Required meter columns
+    weather_cols : list[str]
+        Required weather columns
+    """
+
     """
 	Validate input meter and weather data.
 
@@ -85,6 +101,6 @@ def validate_data(meter_df, weather_df, meter_cols, weather_cols):
 	"""
 
     validate_cols(meter_df, meter_cols)
-    validate_cols(weather_df, weather_cols)
     validate_meter_vals(meter_df)
+    validate_cols(weather_df, weather_cols)
     validate_weather_vals(weather_df)
