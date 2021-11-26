@@ -90,16 +90,6 @@ def validate_data(meter_df, weather_df, meter_cols, weather_cols):
         Required weather columns
     """
 
-    """
-	Validate input meter and weather data.
-
-	:param meter_df: (Pandas dataframe) input meter data
-	:param weather_df: (Pandas dataframe) input weather data
-	:param meter_cols: (list) required meter columns
-	:param weather_cols: (list) required weather columns
-	:return: None
-	"""
-
     validate_cols(meter_df, meter_cols)
     validate_meter_vals(meter_df)
     validate_cols(weather_df, weather_cols)
