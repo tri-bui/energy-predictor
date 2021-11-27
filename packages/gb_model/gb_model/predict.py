@@ -1,15 +1,13 @@
 import pandas as pd
-
 from gb_model import __version__
 from gb_model.config import config, logging_config
 from gb_model.tests import data_validation
 from gb_model.processing import preprocessing, pipeline
 
 
-logger = logging_config.get_logger(__name__)
-
-wpipe = pipeline.wthr_pipe
-fpipe = pipeline.feat_pipe
+logger = logging_config.get_logger(__name__) # logger
+wpipe = pipeline.wthr_pipe # weather data pipeline
+fpipe = pipeline.feat_pipe # feature pipeline
 
 
 def make_prediction(meter_data, weather_data, time_var='timestamp'):
