@@ -60,9 +60,9 @@ def pred_pipe(df, rare_encoder_path, mean_encoder_path, scaler_path,
 		Whether to convert site 0 predictions back to original units, by 
 		default False
 	sqft_var : str, optional
-		Name of square footage variable, by default 'square_feet'
+		Name of square footage variable, by default "square_feet"
 	target_var : str, optional
-		Name of target variable, by default 'meter_reading'
+		Name of target variable, by default "meter_reading"
 
 	Returns
 	-------
