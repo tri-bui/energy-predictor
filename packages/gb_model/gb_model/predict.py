@@ -11,14 +11,23 @@ fpipe = pipeline.feat_pipe # feature pipeline
 
 
 def make_prediction(meter_data, weather_data, time_var='timestamp'):
+
     """
-    Make predictions from meter and weather data.
+    Make meter reading predictions from meter and weather data.
 
-    :param meter_data: (dictionary) raw meter data in JSON format
-    :param weather_data: (dictionary) raw weather data in JSON format
-    :param time_var: (str) name of datetime variable
+    Parameters
+    ----------
+    meter_data : JSON
+        Raw meter data
+    weather_data : JSON
+        Raw weather data
+    time_var : str, optional
+        Name of timestamp variable, by default 'timestamp'
 
-    :return: (dictionary) predictions in JSON format
+    Returns
+    -------
+    JSON
+        Meter reading predictions and model version
     """
 
     # Read and validate data
