@@ -1,7 +1,7 @@
 import joblib
 import numpy as np
 import pandas as pd
-# import xgboost as xgb
+import xgboost as xgb
 
 
 def split(df, meter_var='meter'):
@@ -91,8 +91,8 @@ def predict(df, model=None, model_path=None, use_xgb=False):
 	"""
 
 	df = df.copy()
-	# if use_xgb:
-	# 	df = xgb.DMatrix(df)
+	if use_xgb:
+		df = xgb.DMatrix(df)
 
 	if model_path:
 		model = joblib.load(model_path)
