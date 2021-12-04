@@ -2,28 +2,32 @@ import pytest
 import pathlib
 import datetime
 import pandas as pd
-
 from gb_model.processing import preprocessing
 from gb_model.config import config
 
 
-TEST_PATH = pathlib.Path(__file__).resolve().parent
-DATA_PATH = TEST_PATH / 'datasets'
+# Data path
+TEST_PATH = pathlib.Path(__file__).resolve().parent # gb_model/tests/
+DATA_PATH = TEST_PATH / 'datasets' # gb_model/tests/datasets
 
+# Meter data subset for testing
 meter = pd.read_pickle(DATA_PATH / 'm_preprocessing.pkl')
 print(meter.info())
 
+# Weather data subset for testing
 weather = pd.read_pickle(DATA_PATH / 'w_preprocessing.pkl')
 print(weather.info())
 
+# Building data subset for testing
 building = pd.read_pickle(DATA_PATH / 'b_preprocessing.pkl')
 print(building.info())
 
+
 """
-The weather dataset contains the first 2 days of sites 0 and 15. 
-There are 2 missing timestamps and all columns with weather 
-measurements have some missing data. The 'precip_depth_1_hr' column 
-is missing 100% of the data in site 0.
+The weather dataset contains the first 2 days of sites 0 and 15. There are 2 
+missing timestamps and all columns with weather measurements have some missing 
+data. The 'precip_depth_1_hr' column is missing 100% of the data in site 0.
+
 Data shape: [94, 9]
 """
 
