@@ -34,6 +34,9 @@ Data shape: [94, 9]
 
 @pytest.fixture
 def time_converter():
+
+    """ Fit a TimeConverter that convert UTC to local time. """
+
     tc = preprocessing.TimeConverter(config.TZ_OFFSETS)
     tc.fit(weather)
     return tc
@@ -41,6 +44,10 @@ def time_converter():
 
 @pytest.fixture
 def time_reindexer():
+
+    """ Fit a TimeReindexer that reindexes the weather data from 
+    "2017-01-01 00:00:00" to "2017-01-02 23:00:00". """
+
     tr = preprocessing.TimeReindexer()
     tr.fit(weather, t_start='2017-01-01 00:00:00', t_end='2017-01-02 23:00:00')
     return tr
@@ -48,11 +55,19 @@ def time_reindexer():
 
 @pytest.fixture
 def missing_imputer():
+
+    """ Instantiate a MissingImputer that imputes missing data using cubic or 
+    linear interpolation, followed by a forward and back fill. """
+
     return preprocessing.MissingImputer(config.CUB_VARS, config.LIN_VARS)
 
 
 @pytest.fixture
 def data_copier(time_reindexer):
+
+    """ Fit a DataCopier to copy weather data from site 0 to site 15. The 
+    weather data is reindexed before the copy. """
+
     X = time_reindexer.transform(weather)
     dc = preprocessing.DataCopier()
     dc.fit(X, copy_from_site=0, copy_to_site=15)
