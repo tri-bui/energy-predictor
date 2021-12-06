@@ -77,11 +77,9 @@ def data_copier(time_reindexer):
 
 def test_TimeConverter(time_converter):
 
-    """
-    Both sites have a timezone offset of -5. After converting,
+    """ Both sites have a timezone offset of -5. After converting,
     01/01/2017 00:00:00 should become 12/31/2016 19:00:00 and
-    01/02/2017 23:00:00 should become 01/02/2017 18:00:00
-    """
+    01/02/2017 23:00:00 should become 01/02/2017 18:00:00 """
 
     X = time_converter.transform(weather)
     assert X.loc[0, 'timestamp'] == datetime.datetime(2016, 12, 31, 19)
@@ -90,11 +88,9 @@ def test_TimeConverter(time_converter):
 
 def test_TimeReindexer(time_reindexer):
 
-    """
-    Since there are 2 missing timestamps, reindexing with the same
+    """ Since there are 2 missing timestamps, reindexing with the same
     start and end should add 2 more rows. The first and last rows
-    should be the same as the passed in timestamps.
-    """
+    should be the same as the passed in timestamps. """
 
     X = time_reindexer.transform(weather)
     assert X.shape[0] == 96
@@ -104,13 +100,11 @@ def test_TimeReindexer(time_reindexer):
 
 def test_MissingImputer(missing_imputer):
 
-    """
-    This imputer is only able to fill missing values in columns where
+    """ This imputer is only able to fill missing values in columns where
     there is some data present by a per-site basis. 1 column is missing
     100% data in site 0 so that is the only one that will not be filled.
     After imputing, there should be 48 missing values left, all of which
-    should be coming from the 'precip_depth_1_hr' column.
-    """
+    should be coming from the 'precip_depth_1_hr' column. """
 
     X = missing_imputer.transform(weather)
     assert X['precip_depth_1_hr'].isnull().sum() == 48
@@ -119,12 +113,10 @@ def test_MissingImputer(missing_imputer):
 
 def test_DataCopier(data_copier):
 
-    """
-    Site 0 has 48 rows and site 15 only has 46 so the data has to be
+    """ Site 0 has 48 rows and site 15 only has 46 so the data has to be
     reindexed before applying this transformer. After reindexing,
     there should be a total of 96 rows. After copying the data,
-    'sea_level_pressure' data should be the same for sites 0 and 15.
-    """
+    'sea_level_pressure' data should be the same for sites 0 and 15. """
 
     dc, X = data_copier
     s0_slp = weather.loc[weather[dc.site_var] == dc.copy_from_site, dc.var_to_copy]
