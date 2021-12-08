@@ -126,5 +126,8 @@ def test_DataCopier(data_copier):
 
 
 def test_merge_data():
+
+    """ The merged data should have 94 rows and 16 columns. """
+    
     X = preprocessing.merge_data(meter, weather, building)
     assert X.shape == (94, 16)
