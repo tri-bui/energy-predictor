@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from gb_model.config import config as cfg
 from gb_model.processing import preprocessing as ppg
-from gb_model.processing import features as fts
+from gb_model.processing import featurization as ftn
 from gb_model.processing import prediction as pdn
 
 
@@ -22,10 +22,10 @@ wthr_pipe = Pipeline(
 # Feature engineering
 feat_pipe = Pipeline(
 	[
-		('weather_extractor', fts.WeatherExtractor()),
-		('time_extractor', fts.TimeExtractor()),
-		('holiday_extractor', fts.HolidayExtractor(countries=cfg.COUNTRIES)),
-		('feat_selector', fts.FeatSelector(feats=cfg.FEATS))
+		('weather_extractor', ftn.WeatherExtractor()),
+		('time_extractor', ftn.TimeExtractor()),
+		('holiday_extractor', ftn.HolidayExtractor(countries=cfg.COUNTRIES)),
+		('feat_selector', ftn.FeatSelector(feats=cfg.FEATS))
 	]
 )
 
