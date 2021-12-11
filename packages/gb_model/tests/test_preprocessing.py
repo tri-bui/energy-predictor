@@ -8,7 +8,7 @@ from gb_model.config import config
 
 # Data path
 TEST_PATH = pathlib.Path(__file__).resolve().parent # gb_model/tests/
-DATA_PATH = TEST_PATH / 'datasets' # gb_model/tests/datasets
+DATA_PATH = TEST_PATH / 'datasets' # gb_model/tests/datasets/
 
 # Meter data subset for testing
 meter = pd.read_pickle(DATA_PATH / 'm_preprocessing.pkl')
@@ -128,6 +128,6 @@ def test_DataCopier(data_copier):
 def test_merge_data():
 
     """ The merged data should have 94 rows and 16 columns. """
-    
+
     X = preprocessing.merge_data(meter, weather, building)
     assert X.shape == (94, 16)

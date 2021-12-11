@@ -2,21 +2,24 @@ import pytest
 import pathlib
 import numpy as np
 import pandas as pd
-
 from gb_model.processing import features
 from gb_model.config import config
 
 
-TEST_PATH = pathlib.Path(__file__).resolve().parent
-DATA_PATH = TEST_PATH / 'datasets'
+# Data path
+TEST_PATH = pathlib.Path(__file__).resolve().parent # gb_model/tests/
+DATA_PATH = TEST_PATH / 'datasets' # gb_model/tests/datasets/
 
+# Combined data subset for testing featurization
 df = pd.read_pickle(DATA_PATH / 'd_features.pkl')
 print(df.info())
 
+
 """
-This dataset is the combined building, weather, and meter datasets. 
-It contains the first 2 days of buildings 0 and 1448. There are no
-missing values but there are 2 missing timestamps in building 1448.
+This dataset is the combined building, weather, and meter datasets. It contains 
+the first 2 days of data from buildings 0 and 1448. There are no missing values 
+but there are 2 missing timestamps from building 1448.
+
 Data shape: [94, 16]
 """
 
