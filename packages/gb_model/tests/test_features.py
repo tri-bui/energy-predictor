@@ -64,11 +64,9 @@ def feat_selector():
 
 def test_WeatherExtractor(weather_extractor):
 
-    """
-    This transformer drops 1 feature and creates 3 more.
+    """ This transformer drops 1 feature and creates 3 more.
     After the transformation, the number of columns should
-    increase to 18.
-    """
+    increase to 18. """
 
     X = weather_extractor.transform(df)
     assert X.shape == (94, 18)
@@ -82,10 +80,8 @@ def test_WeatherExtractor(weather_extractor):
 
 def test_TimeExtractor(time_extractor):
 
-    """
-    This transformer creates 4 new features. After the transformation,
-    the number of columns should increase to 20.
-    """
+    """ This transformer creates 4 new features. After the transformation,
+    the number of columns should increase to 20. """
 
     X = time_extractor.transform(df)
     assert X.shape == (94, 20)
@@ -101,10 +97,8 @@ def test_TimeExtractor(time_extractor):
 
 def test_HolidayExtractor(holiday_extractor):
 
-    """
-    This transformer creates 2 new features. After the transformation,
-    the number of columns should increase to 18.
-    """
+    """ This transformer creates 2 new features. After the transformation,
+    the number of columns should increase to 18. """
 
     X = holiday_extractor.transform(df)
     assert X.shape == (94, 18)
