@@ -69,7 +69,7 @@ def test_WeatherExtractor(weather_extractor):
     increase to 18. """
 
     X = weather_extractor.transform(df)
-    assert X.shape == (94, 18)
+    assert X.shape[1] == 18
     assert np.round(X.loc[0, 'rel_humidity'], 2) == 83.41
     assert np.round(X.loc[48, 'rel_humidity'], 2) == 81.76
     assert np.round(X.loc[5, 'wind_direction_x'], 2) == 0.17
@@ -84,7 +84,7 @@ def test_TimeExtractor(time_extractor):
     the number of columns should increase to 20. """
 
     X = time_extractor.transform(df)
-    assert X.shape == (94, 20)
+    assert X.shape[1] == 20
     assert X.loc[0, 'dayofyear'] == 1
     assert X.loc[93, 'dayofyear'] == 2
     assert X.loc[1, 'dayofweek'] == 6
@@ -101,11 +101,11 @@ def test_HolidayExtractor(holiday_extractor):
     the number of columns should increase to 18. """
 
     X = holiday_extractor.transform(df)
-    assert X.shape == (94, 18)
+    assert X.shape[1] == 18
     assert X.loc[0, 'country'] == X.loc[93, 'country'] == 'US'
     assert X.loc[1, 'is_holiday'] == X.loc[92, 'is_holiday'] == 1
 
 
 def test_FeatSelector(feat_selector):
     X = feat_selector.transform(df)
-    assert X.shape == (94, 6)
+    assert X.shape[1] == 6
