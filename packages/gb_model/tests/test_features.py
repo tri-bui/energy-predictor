@@ -107,5 +107,9 @@ def test_HolidayExtractor(holiday_extractor):
 
 
 def test_FeatSelector(feat_selector):
+
+    """ This transformer selects features in a dataframe. There should be 6 
+    columns selected. """
+
     X = feat_selector.transform(df)
     assert X.shape[1] == 6
