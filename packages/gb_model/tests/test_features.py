@@ -2,7 +2,7 @@ import pytest
 import pathlib
 import numpy as np
 import pandas as pd
-from gb_model.processing import features
+from gb_model.processing import featurization
 from gb_model.config import config
 
 
@@ -30,7 +30,7 @@ def weather_extractor():
     """ Fit a WeatherExtractor that creates a feature for relative humidity and 
     converts wind direction from compass degrees to x- and y-components. """
 
-    we = features.WeatherExtractor()
+    we = featurization.WeatherExtractor()
     we.fit(df)
     return we
 
@@ -41,7 +41,7 @@ def time_extractor():
     """ Instantiate a TimeExtractor that extracts time components from the 
     timestamp feature. """
 
-    return features.TimeExtractor()
+    return featurization.TimeExtractor()
 
 
 @pytest.fixture
@@ -50,7 +50,7 @@ def holiday_extractor():
     """ Instantiate a HolidayExtractor that creates a country feature and a 
     holiday binary indicator using the site and date from the timestamp. """
 
-    return features.HolidayExtractor(config.COUNTRIES)
+    return featurization.HolidayExtractor(config.COUNTRIES)
 
 
 @pytest.fixture
@@ -59,7 +59,7 @@ def feat_selector():
     """ Instantiate a FeatSelector that selects the first 4 and last 2 features 
     from the `config` module. """
 
-    return features.FeatSelector(config.FEATS[:4] + config.FEATS[-2:])
+    return featurization.FeatSelector(config.FEATS[:4] + config.FEATS[-2:])
 
 
 def test_WeatherExtractor(weather_extractor):
