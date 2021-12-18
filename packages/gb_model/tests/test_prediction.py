@@ -7,11 +7,14 @@ from gb_model.processing import pipeline
 from gb_model.config import config
 
 
-TEST_PATH = pathlib.Path(__file__).resolve().parent
-DATA_PATH = TEST_PATH / 'datasets'
+# Data path
+TEST_PATH = pathlib.Path(__file__).resolve().parent # gb_model/tests/
+DATA_PATH = TEST_PATH / 'datasets' # gb_model/tests/datasets/
 
+# Combined data subset for testing prediction
 df = pd.read_pickle(DATA_PATH / 'd_prediction.pkl')
 print(df.info())
+
 
 """
 This dataset is the combined building, weather, and meter datasets. 
