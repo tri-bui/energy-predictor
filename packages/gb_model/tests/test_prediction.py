@@ -1,8 +1,6 @@
 import pytest
 import pathlib
-import numpy as np
 import pandas as pd
-
 from gb_model.processing import pipeline
 from gb_model.config import config
 
