@@ -15,11 +15,12 @@ print(df.info())
 
 
 """
-This dataset is the combined building, weather, and meter datasets. 
-It contains the first day of each type of meter. Meter 0 is from 
-building 0, meter 1 is from building 175, meter 2 is from building 
-750, and meter 3 is from building 1000. 1 timestamp is missing in
-buildings 750 and 1000.
+This dataset is the combined dataset containing building, weather, and meter 
+data. It contains the first day of data for each type of meter. Meter 0 is from 
+building 0, meter 1 is from building 175, meter 2 is from building 750, and 
+meter 3 is from building 1000. 1 timestamp is missing for buildings 750 and 
+1000.
+
 Data shape: [94, 16]
 """
 
