@@ -27,6 +27,10 @@ Data shape: [94, 16]
 
 # @pytest.mark.skip(reason='Changed to 1 model')
 def test_pred_pipe():
+
+    """ The prediction pipeline should produce a prediction for each of the 94 
+    rows of data. """
+
     pred = pipeline.pred_pipe(df,
                               config.MODEL_PATH / 'rare_enc',
                               config.MODEL_PATH / 'mean_enc',
