@@ -31,11 +31,10 @@ def test_pred_pipe():
     """ The prediction pipeline should produce a prediction for each of the 94 
     rows of data. """
 
-    pred = pipeline.pred_pipe(df,
-                              config.MODEL_PATH / 'rare_enc',
-                              config.MODEL_PATH / 'mean_enc',
-                              config.MODEL_PATH / 'scaler',
-                              config.MODEL_PATH / 'lgb',
-                              use_xgb=False)
+    pred = pipeline.pred_pipe(df, config.MODEL_PATH / 'rare_enc', 
+                              config.MODEL_PATH / 'mean_enc', 
+                              config.MODEL_PATH / 'scaler', 
+                              config.MODEL_PATH / 'lgb', use_model0=True, 
+                              use_xgb=False, inverse_transform_site0=False)
     assert len(pred) == 94
     # assert np.round(pred[48]) == 17152
