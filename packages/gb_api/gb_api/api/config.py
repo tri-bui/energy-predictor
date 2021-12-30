@@ -2,11 +2,12 @@ import os
 import pathlib
 
 
+# Directory paths
 ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
 LOG_PATH = ROOT_PATH / 'logs'
 LOG_PATH.mkdir(exist_ok=True)
 
-
+# Default config
 class Config:
     DEVELOPMENT = False
     DEBUG = False
@@ -15,16 +16,16 @@ class Config:
     SERVER_PORT = 5000
     SECRET_KEY = 'secretkey'
 
-
+# Development config
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
 
-
+# Testing config
 class TestingConfig(Config):
     TESTING = True
 
-
+# Production config
 class ProductionConfig(Config):
     SERVER_PORT = os.environ.get('PORT', 5000)
 
