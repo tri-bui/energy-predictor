@@ -1,14 +1,12 @@
 import json
 from flask import Flask, Blueprint, request, jsonify
-
 from gb_api.api import logging_config
 from gb_api import __version__ as api_version
 from gb_model import predict, __version__ as model_version
 
 
-logger = logging_config.get_logger(__name__)
-
-pred_app = Blueprint('pred_app', __name__)
+logger = logging_config.get_logger(__name__) # logger
+pred_app = Blueprint('pred_app', __name__) # app blueprint
 
 
 @pred_app.route('/', methods=['GET'])
