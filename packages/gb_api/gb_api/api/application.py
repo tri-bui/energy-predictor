@@ -9,12 +9,14 @@ logger = logging_config.get_logger(__name__) # logger
 pred_app = Blueprint('pred_app', __name__) # app blueprint
 
 
+# /
 @pred_app.route('/', methods=['GET'])
 def index():
     if request.method == 'GET':
         return '<a href="/health">health</a><br/><a href="/version">version</a>'
 
 
+# /health
 @pred_app.route('/health', methods=['GET'])
 def health():
     if request.method == 'GET':
@@ -22,6 +24,7 @@ def health():
         return 'ok'
 
 
+# /version
 @pred_app.route('/version', methods=['GET'])
 def version():
     if request.method == 'GET':
@@ -29,6 +32,7 @@ def version():
         return jsonify({'model_version': model_version, 'api_version': api_version})
 
 
+# /v1/predict
 @pred_app.route('/v1/predict', methods=['POST'])
 def pred():
     if request.method == 'POST':
@@ -57,6 +61,7 @@ def pred():
         return jsonify({'predictions': predictions, 'version': ver})
 
 
+# Create app
 def create_app(config_object) -> Flask:
     app = Flask('gb_api')
     app.config.from_object(config_object)
