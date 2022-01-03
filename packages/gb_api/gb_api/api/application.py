@@ -13,7 +13,9 @@ pred_app = Blueprint('pred_app', __name__) # app blueprint
 @pred_app.route('/', methods=['GET'])
 def index():
     if request.method == 'GET':
-        return '<a href="/health">health</a><br/><a href="/version">version</a>'
+        health_route = '<a href="/health">health</a>'
+        version_route = '<a href="/version">version</a>'
+        return health_route + '<br/>' + version_route
 
 
 # /health
@@ -28,8 +30,12 @@ def health():
 @pred_app.route('/version', methods=['GET'])
 def version():
     if request.method == 'GET':
-        logger.info(f'model_version: {model_version} - api_version: {api_version}')
-        return jsonify({'model_version': model_version, 'api_version': api_version})
+        logger.info(
+            f'model_version: {model_version} - api_version: {api_version}'
+        )
+        return jsonify(
+            {'model_version': model_version, 'api_version': api_version}
+        )
 
 
 # /v1/predict
