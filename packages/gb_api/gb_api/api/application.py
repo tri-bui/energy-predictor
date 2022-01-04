@@ -43,8 +43,8 @@ def version():
 def pred():
     if request.method == 'POST':
         input_files = request.files
-        logger.info(f'Number of files: {len(input_files)}'
-                    f'\nInput files: {input_files} ()')
+        logger.info(f'Number of files: {len(input_files)}\n'
+                    f'Input files: {input_files}')
 
         if len(input_files) > 0:
             meter_data = json.load(input_files['meter'])
@@ -55,8 +55,8 @@ def pred():
             meter_data = input_data.get('meter')
             weather_data = input_data.get('weather')
 
-        logger.info(f'Input meter data: {meter_data}'
-                    f'\nInput weather data: {weather_data}')
+        logger.info(f'Input meter data: {meter_data}\n'
+                    f'Input weather data: {weather_data}')
 
         output = predict.make_prediction(meter_data, weather_data)
         logger.info(f'Output: {output}')
