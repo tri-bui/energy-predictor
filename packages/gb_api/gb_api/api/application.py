@@ -42,28 +42,34 @@ def version():
 @pred_app.route('/v1/predict', methods=['POST'])
 def pred():
     if request.method == 'POST':
+
+        # Input files
         input_files = request.files
         logger.info(f'Number of files: {len(input_files)}\n'
                     f'Input files: {input_files}')
 
+        # Load json from input files
         if len(input_files) > 0:
             meter_data = json.load(input_files['meter'])
             weather_data = json.load(input_files['weather'])
 
+        # Get json from request if there are no input files
         else:
             input_data = request.get_json()
             meter_data = input_data.get('meter')
             weather_data = input_data.get('weather')
 
+        # Log input data
         logger.info(f'Input meter data: {meter_data}\n'
                     f'Input weather data: {weather_data}')
 
+        # Make predictions
         output = predict.make_prediction(meter_data, weather_data)
         logger.info(f'Output: {output}')
 
+        # Predictions and version
         predictions = output.get('predictions')
         ver = output.get('version')
-
         return jsonify({'predictions': predictions, 'version': ver})
 
 
