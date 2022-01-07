@@ -1,6 +1,5 @@
 import pytest
 import json
-
 from gb_api.api import application, config
 from gb_api import __version__ as api_version
 from gb_model import __version__ as model_version
@@ -8,6 +7,9 @@ from gb_model import __version__ as model_version
 
 @pytest.fixture
 def app_instance():
+
+    """ Create an application with testing configuration. """
+
     app = application.create_app(config.TestingConfig)
     with app.app_context():
         yield app
@@ -15,6 +17,9 @@ def app_instance():
 
 @pytest.fixture
 def app_test_client(app_instance):
+
+    """ Get the test client from the application instance. """
+
     with app_instance.test_client() as client:
         yield client
 
