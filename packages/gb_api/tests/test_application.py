@@ -25,16 +25,26 @@ def app_test_client(app_instance):
 
 
 def test_index(app_test_client):
+
+    """ Test the status of the "/" route. """
+
     response = app_test_client.get('/')
     assert response.status_code == 200
 
 
 def test_health(app_test_client):
+
+    """ Test the status of the "/health" route. """
+
     response = app_test_client.get('/health')
     assert response.status_code == 200
 
 
 def test_version(app_test_client):
+
+    """ Test the status of the "/version" route. It should return the model and 
+    API versions. """
+
     response = app_test_client.get('/version')
     response_json = json.loads(response.data)
     assert response.status_code == 200
@@ -43,6 +53,10 @@ def test_version(app_test_client):
 
 
 def test_pred(app_test_client):
+
+    """ Test the status of the "/v1/predict" route. It should return the model 
+    version and predictions for the posted data. """
+
     DATA_PATH = config.ROOT_PATH.parent / 'tests' / 'datasets'
     data = {}
     with open(DATA_PATH / 'm_application.json', 'r') as m:
