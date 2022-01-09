@@ -57,6 +57,7 @@ def test_pred(app_test_client):
     """ Test the status of the "/v1/predict" route. It should return the model 
     version and predictions for the posted data. """
 
+    # Load meter and weather data
     DATA_PATH = config.ROOT_PATH.parent / 'tests' / 'datasets'
     data = {}
     with open(DATA_PATH / 'm_application.json', 'r') as m:
@@ -64,6 +65,7 @@ def test_pred(app_test_client):
     with open(DATA_PATH / 'w_application.json', 'r') as w:
         data['weather'] = json.load(w)
 
+    # Post data to API
     response = app_test_client.post('/v1/predict', json=data)
     response_json = json.loads(response.data)
     preds = response_json.get('predictions')
