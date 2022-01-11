@@ -8,8 +8,8 @@ from setuptools import find_packages, setup
 
 # Meta-data.
 NAME = 'gb_api'
-DESCRIPTION = 'API for LightGBM regression model.'
-URL = 'https://github.com/tri-bui/gep_gbm'
+DESCRIPTION = 'API for gradient boosting regression model.'
+URL = 'https://github.com/tri-bui/energy-predictor'
 EMAIL = 'buitri91@gmail.com'
 AUTHOR = 'Tri Bui'
 REQUIRES_PYTHON = '>=3.7'
