@@ -16,8 +16,8 @@ REQUIRES_PYTHON = '>=3.7'
 
 
 # Version
-CURRENT_PATH = Path(__file__).resolve().parent
-PACKAGE_PATH = CURRENT_PATH / NAME
+CURRENT_PATH = Path(__file__).resolve().parent # gb_api/
+PACKAGE_PATH = CURRENT_PATH / NAME # gb_api/gb_api/
 with open(PACKAGE_PATH / 'VERSION') as v:
     VERSION = v.read().strip()
 
