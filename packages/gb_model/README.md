@@ -6,28 +6,34 @@ As the study of power consumption in buildings is a very specific problem, this 
 
 ## Prediction Pipeline
 
-1. Read in building, meter, and weather data
-2. Validate meter and weather data and convert timestamps to datetime
-3. Preprocess weather data
-    a. Convert timestamps from UTC to local time
-    b. Reindex data to include a timestamp for every hour within the time interval at every site
-    c. Impute missing values using cubic and linear interpolation, followed by forward and backward fills (this step only applies to sites that are not missing 100% of their values in the feature being filled)
-    d. Copy data from one site's feature to another site (this step applies to sites missing 100% of their values in the feature)
-4. Merge all input data
-5. Engineer and select features
-    a. Create new features for relative humidity and wind direction cartesian components
-    b. Extract time components from timestamps
-    c. Create new features for country and holiday indicator
-    d. Select features to match the data the model was trained on
-6. Check for missing values
-7. Make predictions
-    a. Split data by meter type
-    b. For each meter type:
-        i. Encode rare categorical labels
-        ii. Encode categorical features using the label's target mean
-        iii. Scale features using the mean and standard deviation
-        iv. Load model and make predictions
-        v. Inverse-transform predictions
-    c. Combine predictions from all meter types
-8. Log the model version, input meter and weather data, and predictions
-9. Convert predictions and model version into JSON format
+<ol>
+    <li>Read in building, meter, and weather data</li>
+    <li>Validate meter and weather data and convert timestamps to datetime</li>
+    <li>Preprocess weather data<ol>
+        <li type='a'>Convert timestamps from UTC to local time</li>
+        <li type='a'>Reindex data to include a timestamp for every hour within the time interval at every site</li>
+        <li type='a'>Impute missing values using cubic and linear interpolation, followed by forward and backward fills (this step only applies to sites that are not missing 100% of their values in the feature being filled)</li>
+        <li type='a'>Copy data from one site's feature to another site (this step applies to sites missing 100% of their values in the feature)</li>
+    </ol></li>
+    <li>Merge all input data</li>
+    <li>Engineer and select features<ol>
+        <li type='a'>Create new features for relative humidity and wind direction cartesian components</li>
+        <li type='a'>Extract time components from timestamps</li>
+        <li type='a'>Create new features for country and holiday indicator</li>
+        <li type='a'>Select features to match the data the model was trained on</li>
+    </ol></li>
+    <li>Check for missing values</li>
+    <li>Make predictions<ol>
+        <li type='a'>Split data by meter type</li>
+        <li type='a'>For each meter type:<ol>
+            <li type='i'>Encode rare categorical labels</li>
+            <li type='i'>Encode categorical features using the label's target mean</li>
+            <li type='i'>Scale features using the mean and standard deviation</li>
+            <li type='i'>Load model and make predictions</li>
+            <li type='i'>Inverse-transform predictions</li>
+        </ol></li>
+        <li type='a'>Combine predictions from all meter types</li>
+    </ol></li>
+    <li>Log the model version, input meter and weather data, and predictions</li>
+    <li>Convert predictions and model version into JSON format</li>
+</ol>
