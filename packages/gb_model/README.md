@@ -37,3 +37,18 @@ As the study of power consumption in buildings is a very specific problem, this 
     <li>Log the model version, input meter and weather data, and predictions</li>
     <li>Convert predictions and model version into JSON format</li>
 </ol>
+
+## Requirements
+
+- Python>=3.7
+- joblib==0.14.1
+- holidays==0.10.1
+- numpy==1.21.0
+- pandas==1.0.3
+- scikit-learn==0.22.0
+- feature-engine==0.3.1
+- lightgbm==2.3.1
+- xgboost==1.5.0
+- pytest==5.4.1 (for testing)
+- setuptools==46.1.1 (for packaging)
+- wheel==0.34.2 (for packaging)
