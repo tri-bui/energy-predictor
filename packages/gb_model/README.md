@@ -4,6 +4,7 @@ This package preprocesses input meter and weather data, engineers and selects fe
 
 As the study of power consumption in buildings is a very specific problem, this application was designed to make predictions for these 1,449 buildings ONLY. Any new buildings would require additional training data for those buildings and the model would have to be retrained and updated.
 
+
 ## Prediction Pipeline
 
 <ol>
@@ -37,6 +38,7 @@ As the study of power consumption in buildings is a very specific problem, this 
     <li>Log the model version, input meter and weather data, and predictions</li>
     <li>Convert predictions and model version into JSON format</li>
 </ol>
+
 
 ## Requirements
 
