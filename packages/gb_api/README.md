@@ -28,3 +28,11 @@ As the study of power consumption in buildings is a very specific problem, this 
 - Format: {"meter": {METER DATA}, "weather": {WEATHER DATA}}
 - Meter data must have the following columns: ["timestamp", "building_id", "meter"]
 - Weather data must have the following columns: ["timestamp", "site_id", "air_temperature", "dew_temperature", "sea_level_pressure", "wind_speed", "wind_direction"]
+
+
+## Requirements
+
+- Python>=3.7
+- flask==1.1.1
+- gunicorn==19.6
+- pytest==5.4.1 (for testing)
